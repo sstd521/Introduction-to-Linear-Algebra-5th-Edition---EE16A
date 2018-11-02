@@ -1,0 +1,32 @@
+\documentclass{article}
+\usepackage[left=3cm, right=3cm, top=3cm]{geometry}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{xcolor}
+\usepackage{graphicx}
+\begin{document}
+
+{\LARGE 3. Fruity Fred} \\[.5cm]
+{\Large (a) $R_{AB} = \rho\frac{L-kF}{A_c} + \rho\frac{L-kF}{A_c} = {\color{red} \frac{2\rho (L-kF)}{A_c}}$} \\[1cm]
+{\Large (b) {\color{red} $F = \frac{A_cV_{out} + 2\rho L(V_{out}-1)}{2\rho k(V_{out}-1)}$}}
+
+\begin{figure} [h!]
+\begin{center}
+	\includegraphics[width=0.75\linewidth]{/Users/Alan/Downloads/P2_b.jpg}
+	\caption{Circuit Designed}
+	\label{fig}
+\end{center}
+\end{figure}
+{\color{white} a} \\
+
+As deduced from the process on the picture,
+so $R_{AB} = -\frac{V_{out}}{V_{out}-1}$. Also, as we derived from part (a), which gives $R_{AB} = \frac{2\rho (L-kF)}{A_c}$. Thus, we have that:
+$$R_{AB} = \frac{2\rho (L-kF)}{A_c} = -\frac{V_{out}}{V_{out}-1}$$
+$$\implies 2\rho (L-kF)\cdot-(V_{out}-1) = A_c\cdot V_{out}$$
+$$\implies (2\rho L-2\rho kF)\cdot-(V_{out}-1) = A_c\cdot V_{out}$$
+$$\implies -2\rho L(V_{out}-1) + 2\rho k(V_{out}-1)F = A_c\cdot V_{out}$$
+$$\implies 2\rho k(V_{out}-1)F = A_c\cdot V_{out} + 2\rho L(V_{out}-1)$$
+$$\implies F = \frac{A_cV_{out} + 2\rho L(V_{out}-1)}{2\rho k(V_{out}-1)}$$
+
+
+\end{document}

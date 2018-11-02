@@ -1,0 +1,14 @@
+\documentclass{article}
+\usepackage[left=3cm, right=3cm, top=3cm]{geometry}
+\usepackage{amssymb}
+\begin{document}
+
+(c) They are very similar.\\
+
+Since the steering angle is so small ($\phi[k] = $ 0.0001 rad), its tangent value could be approximated as 0, which is what I did in my linear approximation. In other words, because the steering angle is so small, the nonlinear system behaves just like a linear one.\\[.3cm]
+
+(d) They are very different.\\
+
+Since the steering angle is pretty big ($\phi[k] = $ 0.5 rad), its tangent value could \textbf{not} be approximated as 0, which is what I did in my linear approximation. In other words, the nonlinear system in IPython takes the rather large steering angle into consideration, while my linear approximation doesn't, which is why the trajectories differ.
+
+\end{document}

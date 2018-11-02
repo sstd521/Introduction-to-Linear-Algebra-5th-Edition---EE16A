@@ -1,0 +1,25 @@
+\documentclass{article}
+\usepackage[left=3cm, right=3cm, top=3cm]{geometry}
+\usepackage{amssymb}
+\begin{document}
+
+{\Large 1. Lab Grades and Discussion Attendance}\\[.3cm]
+\indent For lab grades, I should first submit my SID as a file called sid.txt to "Lab grades" on Gradescope. Then, the autograder would show my lab grades.\\
+\indent For discussion grades, the process is very similar: submit my SID as a file called sid.txt to "Discussion attendance" on Gradescope, and the autograder would show my discussion grades.\\[.2cm]
+\indent Additional information: sid.txt should contain only the SID number and nothing else (e.g. no "" marks or extra whitespace), and there's a template in the iPython folder.\pagebreak\\
+
+{\Large 4. Fountain Codes}\\[.3cm]
+(a)\\
+\indent This transmission can recover from at most 3 lost symbols, and it could \textbf{always} recover from losing 1 symbol at most.\\[.1cm]
+\indent However, there are cases where it can’t handle even just two lost symbols. For example, a specific pattern like losing both of the “a”s (the $1^{st}$ and $4^{th}$ symbols) – similarly, any loss that contains both “b”s ($2^{nd}$ and $5^{th}$ symbols) or both “c”s ($3^{rd}$ and $6^{th}$) – can’t be handled by this transmission.\pagebreak\\
+(e)\\
+\indent The maximum loss is \textbf{four} symbols.\\[.1cm]
+\indent This is because that any 3 equations of the method in part (d) is linearly independent, which means that any 3 equations would give a unique solution, which could be used to recover the message. In other words, As long as the loss is less than or equal to 4 symbols, Bob can still recover the message. \\[.3cm]
+(f)\\
+\indent Alice should use the strategy in part \textbf{(d)}.\\[.1cm]
+\indent Let Alice use the strategy in part (d). Since any three equations could help Bob recover the message, so it doesn't matter which linear combination gets lost as long as other 3 are sent through. Suppose only the second linear combination is lost – with “b” being lost and the value of “a” and “c” being sent through – then her fourth linear combination would contain the value of ``$a + b$''. Since Bob knows the value of “a”, the fourth linear combination would give him enough information to recover the entire message.\\
+\indent Let Alice use the strategy in part (a). Again, if only the second linear combination is lost – in this case, with “b” being lost and the value of “a” and “c” being sent through – then her fourth linear combination is useless for Bob as it only provides information for “a”, which means that he can’t recover the entire message.\\
+\indent Thus, Alice should use the strategy in part (d).
+
+
+\end{document}

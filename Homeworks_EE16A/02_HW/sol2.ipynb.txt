@@ -1,0 +1,677 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "# EE16A: Homework 2"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Problem 2: Finding Charges from Potential Measurements"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "[1. 2. 3.]\n"
+     ]
+    }
+   ],
+   "source": [
+    "import numpy as np\n",
+    "\n",
+    "r11 = np.sqrt(2); r12 = np.sqrt(5); r13 = 2\n",
+    "r21 = 1; r22 = np.sqrt(2); r23 = 1\n",
+    "r31 = 2; r32 = np.sqrt(5); r33 = np.sqrt(2)\n",
+    "\n",
+    "y1 = (4 + 3*np.sqrt(5) + np.sqrt(10)) / (2*np.sqrt(5))\n",
+    "y2 = (2 + 4*np.sqrt(2)) / (np.sqrt(2))\n",
+    "y3 = (4 + np.sqrt(5) + 3*np.sqrt(10)) / (2*np.sqrt(5))\n",
+    "\n",
+    "a = np.array([\n",
+    "    [1/r11, 1/r12, 1/r13],\n",
+    "    [1/r21, 1/r22, 1/r23],\n",
+    "    [1/r31, 1/r32, 1/r33]\n",
+    "])\n",
+    "b = np.array([y1, y2, y3])\n",
+    "x = np.linalg.solve(a, b)\n",
+    "print(x)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Problem 4: Fountain Codes\n",
+    "\n",
+    "The answer states that we can reconstruct the message using any 4 out of the 7 tokens transmitted. Here we iterate through all possible combinations of 4 tokens (and their corresponding vectors) and test that out of each set there are 3 vectors that can be merged into an invertible matrix. We also try the decryption using the example message in part (e)."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import numpy as np\n",
+    "v = np.array([[1, 0, 0],\n",
+    "              [0, 1, 0],\n",
+    "              [0, 0, 1],\n",
+    "              [1, 1, 0],\n",
+    "              [1, 0, 1],\n",
+    "              [0, 1, 1],\n",
+    "              [1, 1, 1]])\n",
+    "message = np.array([6, -4, -3]) # message from part (e)\n",
+    "\n",
+    "transmission = np.dot(v, message) # the transmitted tokens\n",
+    "\n",
+    "# Iterate through all combinations of 4 vectors\n",
+    "for i in range(4): #all sets of 4 vectors contain at least one vector from the first four\n",
+    "    for j in range(i+1,5): #we increment so we don't repeat vectors to test\n",
+    "        for k in range(j+1,6):\n",
+    "            for l in range(k+1,7):\n",
+    "                # Check that we can reconstruct the original message with only 3 of the 4 vectors.\n",
+    "                print(\"Trying vectors {}, {}, {}, {}...\".format(i+1, j+1, k+1, l+1)) # one-indexed\n",
+    "                inverse_v = []\n",
+    "                received_signal = []                \n",
+    "                try:\n",
+    "                    # Check if we can reconstruct using only v_i, v_j, v_k\n",
+    "                    inverse_v = np.linalg.inv(v[[i,j,k]])\n",
+    "                    received_signal = np.choose([i,j,k],transmission) #this function results in [v_i, v_j, v_k]\n",
+    "                    print(\"Vectors {}, {} and {} are invertible.\".format(i+1, j+1, k+1))\n",
+    "                except:\n",
+    "                    # Otherwise reconstruct using v_i, v_j, v_l\n",
+    "                    inverse_v = np.linalg.inv(v[[i,j,l]])\n",
+    "                    received_signal = np.choose([i,j,l],transmission)\n",
+    "                    print(\"vectors {}, {} and {} are invertible.\".format(i+1, j+1, l+1))\n",
+    "                print(\"Received message: {}\".format(np.dot(inverse_v, received_signal)))\n",
+    "                print(\"\")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Problem 5: Kinematic Model for a Simple Car\n",
+    "\n",
+    "This script helps to visualize the difference between a nonlinear model and a corresponding linear approximation for a simple car.  What you should notice is that the linear model is similar to the nonlinear model when you are close to the point where the approximation is made.\n",
+    "\n",
+    "First, run the following block to set up the helper functions needed to simulate the vehicle models and plot the trajectories taken."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "''' Problem/Model Setup'''\n",
+    "import numpy as np\n",
+    "import matplotlib.pyplot as plt\n",
+    "\n",
+    "# Vehicle Model Constants\n",
+    "L = 1.0  # length of the car, meters\n",
+    "dt = 0.1 # time difference between timestep (k+1) and timestep k, seconds\n",
+    "\n",
+    "''' Nonlinear Vehicle Model Update Equation '''\n",
+    "def nonlinear_vehicle_model(initial_state, inputs, num_steps):\n",
+    "    x     = initial_state[0] # x position, meters\n",
+    "    y     = initial_state[1] # y position, meters\n",
+    "    theta = initial_state[2] # heading (wrt x-axis), radians\n",
+    "    v     = initial_state[3] # speed, meters per second\n",
+    "    \n",
+    "    a = inputs[0]            # acceleration, meters per second squared\n",
+    "    phi = inputs[1]          # steering angle, radians\n",
+    "    \n",
+    "    state_history = []       # array to hold state values as the time step k advances.\n",
+    "    state_history.append([x,y,theta,v]) # add the initial state (i.e. k = 0) to history.\n",
+    "    \n",
+    "    for i in range(0, num_steps):\n",
+    "        # Find the next state, at time k+1, by applying the nonlinear model to the current state, at time k.\n",
+    "        x_next     = x     + v * np.cos(theta) * dt\n",
+    "        y_next     = y     + v * np.sin(theta) * dt\n",
+    "        theta_next = theta + v/L * np.tan(phi) * dt\n",
+    "        v_next     = v     + a * dt\n",
+    "        \n",
+    "        # Add the next state to the history.\n",
+    "        state_history.append([x_next,y_next,theta_next,v_next])\n",
+    "        \n",
+    "        # Advance to the next state, at time k+1, to get ready for next loop iteration.\n",
+    "        x = x_next\n",
+    "        y = y_next\n",
+    "        theta = theta_next\n",
+    "        v = v_next\n",
+    "        \n",
+    "    return np.array(state_history)\n",
+    "\n",
+    "''' Linear Vehicle Model Update Equation '''\n",
+    "def linear_vehicle_model(A, B, initial_state, inputs, num_steps):\n",
+    "    # Note: A should be a 4x4 matrix, B should be a 4x2 matrix for this linear model.\n",
+    "    \n",
+    "    x     = initial_state[0] # x position, meters\n",
+    "    y     = initial_state[1] # y position, meters\n",
+    "    theta = initial_state[2] # heading (wrt x-axis), radians\n",
+    "    v     = initial_state[3] # speed, meters per second\n",
+    "    \n",
+    "    a = inputs[0]            # acceleration, meters per second squared\n",
+    "    phi = inputs[1]          # steering angle, radians\n",
+    "    \n",
+    "    state_history = []       # array to hold state values as the time step k advances.\n",
+    "    state_history.append([x,y,theta,v]) # add the initial state (i.e. k = 0) to history.\n",
+    "    \n",
+    "    for i in range(0, num_steps):\n",
+    "        # Find the next state, at time k+1, by applying the nonlinear model to the current state, at time k.\n",
+    "        state_next = np.dot(A, state_history[-1]) + np.dot(B, inputs)\n",
+    "                \n",
+    "        # Add the next state to the history.\n",
+    "        state_history.append(state_next)\n",
+    "        \n",
+    "        # Advance to the next state, at time k+1, to get ready for next loop iteration.\n",
+    "        state = state_next\n",
+    "        \n",
+    "    return np.array(state_history)\n",
+    "\n",
+    "''' Plotting Setup'''\n",
+    "def make_model_comparison_plot(state_predictions_nonlinear, state_predictions_linear):\n",
+    "    f = plt.figure()\n",
+    "    plt.plot(state_predictions_nonlinear[0,0], state_predictions_nonlinear[0,1], 'go', label='Start')\n",
+    "    plt.plot(state_predictions_nonlinear[:,0], state_predictions_nonlinear[:,1], 'r', label='Nonlinear')\n",
+    "    plt.plot(state_predictions_linear[:,0], state_predictions_linear[:,1], 'k.', label='Linear')\n",
+    "    plt.legend(loc='upper left')\n",
+    "    plt.xlim([4, 8])\n",
+    "    plt.ylim([9, 12])\n",
+    "    plt.show()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Part B\n",
+    "\n",
+    "Task: Fill in the matrices A and B for the linear system approximating the nonlinear vehicle model under small heading and steering angle approximations."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "A = np.array([[1,0,0,dt], \n",
+    "              [0,1,0,0], \n",
+    "              [0,0,1,0], \n",
+    "              [0,0,0,1]])\n",
+    "\n",
+    "B = np.array([[0,0], \n",
+    "              [0,0], \n",
+    "              [0,0], \n",
+    "              [dt,0]])"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Part C\n",
+    "\n",
+    "Task: Fill out the state and input values from Part C and look at the resulting plot. The plot should help you to visualize the difference between using a linear model and a nonlinear model for this specific starting state and input.\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 17,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "image/png": "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\n",
+      "text/plain": [
+       "<Figure size 432x288 with 1 Axes>"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "[7.44999998e+00 1.00002697e+01 2.45000001e-04 3.00000000e+00]\n",
+      "[ 7.45 10.    0.    3.  ]\n"
+     ]
+    }
+   ],
+   "source": [
+    "x_init  = 5.0\n",
+    "y_init  = 10.0\n",
+    "theta_init = 0.0\n",
+    "v_init     = 2.0\n",
+    "a_input    = 1.0\n",
+    "phi_input  = 0.0001\n",
+    "\n",
+    "state_init = [x_init, y_init, theta_init, v_init]\n",
+    "state_predictions_nonlinear = nonlinear_vehicle_model(state_init, [a_input, phi_input], 10)\n",
+    "state_predictions_linear = linear_vehicle_model(A, B, state_init, [a_input, phi_input], 10)\n",
+    "\n",
+    "make_model_comparison_plot(state_predictions_nonlinear, state_predictions_linear)\n",
+    "\n",
+    "# The problem didn't ask you for the actual values, but it is useful to see where we end up after one time step in both cases.\n",
+    "\n",
+    "print(state_predictions_nonlinear[10])\n",
+    "print(state_predictions_linear[10])\n"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Part D\n",
+    "    \n",
+    "Task: Fill out the state and input values from Problem D and look at the resulting plot.  The plot should help you to visualize the difference between using a linear model and a nonlinear model for this specific starting state and input."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 16,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "image/png": "iVBORw0KGgoAAAANSUhEUgAAAYIAAAD8CAYAAAB6paOMAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAALEgAACxIB0t1+/AAAADl0RVh0U29mdHdhcmUAbWF0cGxvdGxpYiB2ZXJzaW9uIDIuMi4yLCBodHRwOi8vbWF0cGxvdGxpYi5vcmcvhp/UCwAAIABJREFUeJzt3Xt0FeW5x/HvAwQiKCgKKkJE6g1QxBgpqPXEpgWvoNYWFRW8pYKKVqvVek6rtpR6pEtFLRargpWilqOItyrmEKk2pSYeBBQRVMAIBQSLImhIeM4fs8GwTcjOvmSyM7/PWlnZe/Y77zyMcX57bu+YuyMiItHVKuwCREQkXAoCEZGIUxCIiEScgkBEJOIUBCIiEacgEBGJuAaDwMweNrO1Zrao1rQ7zexdM1tgZk+b2Z71zHuymS0xs2VmdlM6CxcRkfRIZI9gCnBy3LTZwBHu3g94D7g5fiYzaw3cD5wC9AHOM7M+KVUrIiJp12AQuPtcYEPctJfdvTr29h9A9zpmHQAsc/cP3L0KeBwYlmK9IiKSZm3S0MclwBN1TD8A+KjW+0rg2/V1YmbFQDFAhw4djjn88MPTUJqISDRUVFR84u5dkpk3pSAws1uAamBaXR/XMa3e8SzcfTIwGaCgoMDLy8tTKU1EJFLMbEWy8yYdBGY2EjgdKPK6ByyqBHrUet8dWJXs8kREJDOSunzUzE4GfgYMdffN9TR7AzjEzA4ys7bAucCs5MoUEZFMSeTy0elAGXCYmVWa2aXAfcAewGwzm29mD8TadjOzFwBiJ5OvAl4CFgNPuvvbGfp3iIhIkqw5DkNd1zmCrVu3UllZyZdffhlSVS1Hbm4u3bt3JycnJ+xSRCRNzKzC3QuSmTcdVw01icrKSvbYYw969uyJWV3noSUR7s769euprKzkoIMOCrscEWkGsmaIiS+//JK9995bIZAiM2PvvffWnpWI7JA1QQAoBNJE61FEasuqIBARkfRTEDTCuHHj6Nu3L/369aN///7MmzePu+++m82b67uCtn5Tpkxh1SrdViEi4WuxQTBt4TR63t2TVre1oufdPZm2sK6bnxNXVlbGc889x5tvvsmCBQt45ZVX6NGjR1JBUFNToyAQkWajRQbBtIXTKH62mBUbV+A4KzauoPjZ4pTCYPXq1eyzzz60a9cOgH322YcZM2awatUqTjrpJE466SQARo8eTUFBAX379uWXv/zljvl79uzJ7bffzgknnMD06dMpLy9nxIgR9O/fny1btqT2DxYRSUGLDIJbSm5h89adv6Vv3rqZW0puSbrPwYMH89FHH3HooYcyZswYXn31VcaOHUu3bt2YM2cOc+bMAYLDR+Xl5SxYsIBXX32VBQsW7OgjNzeX1157jQsuuICCggKmTZvG/Pnz2W233ZKuS0QkVS0yCFZuXNmo6YnYfffdqaioYPLkyXTp0oXhw4czZcqUb7R78sknyc/P5+ijj+btt9/mnXfe2fHZ8OHDk16+iEimZM0NZY2R1ymPFRu/ORBfXqe8lPpt3bo1hYWFFBYWcuSRRzJ16tSdPv/www+ZMGECb7zxBnvttRejRo3a6Xr9Dh06pLR8EZFMaJF7BOOKxtE+p/1O09rntGdc0bik+1yyZAlLly7d8X7+/PkceOCB7LHHHnz++ecAfPbZZ3To0IFOnTqxZs0aXnzxxXr7qz2fiEiYWuQewYgjRwDBuYKVG1eS1ymPcUXjdkxPxqZNm7j66qv597//TZs2bTj44IOZPHky06dP55RTTmH//fdnzpw5HH300fTt25devXpx/PHH19vfqFGjuOKKK9htt90oKyvTeQIRCU3WDDq3ePFievfuHVJFLY/Wp0jLksqgcy3y0JCIiCROQSAiEnEKAhGRiFMQiIhEnIJARCTiFAQiIhGnIGgEM+P666/f8X7ChAnceuutSfW1fPlyjjjiCADKy8sZO3ZsOkoUEWk0BUEjtGvXjqeeeopPPvkkrf0WFBQwceLEtPYZr6amJqP9i0j2UhA0Qps2bSguLuauu+76xmcrVqygqKiIfv36UVRUxMqVwQB3o0aNYuzYsRx33HH06tWLGTNmfGPe0tJSTj/9dABuvfVWLrnkEgoLC+nVq9dOAfHYY48xYMAA+vfvz49//OMdG/dEhr7+y1/+ktZ1ISItR3YOMXHttTB/fnr77N8f7r67wWZXXnkl/fr148Ybb9xp+lVXXcVFF13EyJEjefjhhxk7diwzZ84EgmcZvPbaa7z77rsMHTqUc845Z5fLePfdd5kzZw6ff/45hx12GKNHj2bZsmU88cQTvP766+Tk5DBmzBimTZvGRRddxLhx4+jcuTM1NTUUFRWxYMEC+vXrB3w99LWISH2yMwhC1LFjRy666CImTpy40/hAZWVlPPXUUwBceOGFOwXFmWeeSatWrejTpw9r1qxpcBmnnXYa7dq1o127dnTt2pU1a9ZQUlJCRUUFxx57LABbtmyha9euQDD09eTJk6murmb16tW88847O4JAQ1+LSEOyMwgS+OaeSddeey35+flcfPHF9bYxsx2vtz/VDCCRsZ1qt2/dujXV1dW4OyNHjmT8+PE7tdXQ1yKSKp0jSELnzp350Y9+xEMPPbRj2nHHHcfjjz8OwLRp0zjhhBPSusyioiJmzJjB2rVrAdiwYQMrVqxo1NDXIiJ1yc49gmbg+uuv57777tvxfuLEiVxyySXceeeddOnShUceeSSty+vTpw+//vWvGTx4MNu2bSMnJ4f777+fgQMHJjz0tYhIXRochtrMHgZOB9a6+xGxaT8EbgV6AwPcvbyeeZcDnwM1QHWiQ6RqGOrM0/oUaVkyPQz1FODkuGmLgLOBuQnMf5K790+2QBERyawGDw25+1wz6xk3bTHsfEJURESyU6ZPFjvwsplVmFlxhpclIiJJyPTJ4uPdfZWZdQVmm9m77l7n4aRYUBQD5OXlZbgsERHZLqN7BO6+KvZ7LfA0MGAXbSe7e4G7F3Tp0iWTZYmISC0ZCwIz62Bme2x/DQwmOMksIiLNSINBYGbTgTLgMDOrNLNLzewsM6sEBgHPm9lLsbbdzOyF2Kz7Aq+Z2VvAP4Hn3f2vmflnNI3dd9/9G9MeeOABHn300RCqERFJj0SuGjqvno+erqPtKuDU2OsPgKNSqi4LXHHFFRnt391xd1q10k3gIpIZLXrrUlZWxvjx4ykrK8vYMm699VYmTJgAQGFhIT/72c8YMGAAhx56KH/729+A4FkAN9xwA8ceeyz9+vXjD3/4AwCbNm2iqKiI/Px8jjzySJ555hkgeGhN7969GTNmDPn5+Xz00UcZq19EpMUOMVFWVkZRURFVVVW0bduWkpISBg0alPHlVldX889//pMXXniB2267jVdeeYWHHnqITp068cYbb/DVV19x/PHHM3jwYHr06MHTTz9Nx44d+eSTTxg4cCBDhw4FYMmSJTzyyCP8/ve/z3jNIhJtLTYISktLqaqqoqamhqqqKkpLS5skCM4++2wAjjnmGJYvXw7Ayy+/zIIFC3Y8lGbjxo0sXbqU7t278/Of/5y5c+fSqlUrPv744x3DVB944IEMHDgw4/WKiLTYICgsLKRt27Y79ggKCwubZLnbh5DePnw0BMf57733XoYMGbJT2ylTprBu3ToqKirIycmhZ8+eO4aQ1vDRItJUWuw5gkGDBlFSUsKvfvWrJjssVJ8hQ4YwadIktm7dCsB7773HF198wcaNG+natSs5OTnMmTOHFStWhFajiERXi90jgCAM0hkAmzdvpnv37jveX3fddQnNd9lll7F8+XLy8/Nxd7p06cLMmTMZMWIEZ5xxBgUFBfTv35/DDz88bbWKiCSqwWGow6BhqDNP61OkZcn0MNQiItKCKQhEJL2++CLsCqSRsioImuNhrGyk9SgZs3o1HHAATJsWdiXSCFkTBLm5uaxfv14bsRS5O+vXryc3NzfsUqQluusu+Pxz0D0wWSVrrhrq3r07lZWVrFu3LuxSsl5ubu5OVz+JpMWGDTBpEgwfDt/6VtjVSCNkTRDk5ORw0EEHhV2GiNTnvvtg0ya46aawK5FGyppDQyLSjG3aBPfcA2ecAf36hV2NNJKCQERS9+CDwaGhm28OuxJJgoJARFLz1VcwYQIUFkKIQ7lI8rLmHIGINFOPPgqrVsGUKWFXIknSHoGIJK+6Gu64AwoK4HvfC7saSZL2CEQkeTNmwPvvw1NPgVnY1UiStEcgIslxh9/8Bnr3hmHDwq5GUqA9AhFJzvPPw8KFMHUqtNJ3ymym/3oi0njb9wYOPBDOOy/saiRF2iMQkcabOxfKyuD++yEnJ+xqJEXaIxCRxvvNb6BrV7j44rArkTRQEIhI41RUwMsvw3XXwW67hV2NpIGCQEQaZ/x46NQJRo8OuxJJEwWBiCRu8eLgnoGrr4aOHcOuRtJEQSAiibvjDsjNhbFjw65E0qjBIDCzh81srZktqjXth2b2tpltM7OCXcx7spktMbNlZqZBykWy2YoVwSMoi4uhS5ewq5E0SmSPYApwcty0RcDZwNz6ZjKz1sD9wClAH+A8M+uTXJkiEir34JxATg5cf33Y1UiaNXgfgbvPNbOecdMWA9iuxxYZACxz9w9ibR8HhgHvJFmriIRl0iR48cXgKWQ9eoRdjaRZJs8RHAB8VOt9ZWxancys2MzKzaxczyUWaUaWLIGf/hSGDIExY8KuRjIgk0FQ1+6C19fY3Se7e4G7F3TR8UeR5mHrVrjgguB+gYcf1gijLVQmh5ioBGrvQ3YHVmVweSKSbr/6FZSXB8NNd+sWdjWSIZncI3gDOMTMDjKztsC5wKwMLk9E0qmsDMaNg5Ej4Qc/CLsayaBELh+dDpQBh5lZpZldamZnmVklMAh43sxeirXtZmYvALh7NXAV8BKwGHjS3d/O1D9ERNJo0ya48MLgxPA994RdjWRYIlcN1TfG7NN1tF0FnFrr/QvAC0lXJyLhuO46+OADePXVYDgJadF0Z7GI7GzWLHjwQbjxRvjOd8KuRpqAgkBEvrZmDVx2GRx1FNx+e9jVSBPRg2lEJOAOl18On30Gc+ZA27ZhVyRNREEgIoE//hGefRbuugv69g27GmlCOjQkIrBsGfzkJ1BUpJFFI0hBIBJ11dXB3cM5OTBlCrTSZiFqdGhIJOrGj4d582D6dOjePexqJASKfpEoe+MNuO02OP98OPfcsKuRkCgIRKLqiy+CQ0L77x8MLy2RpUNDIlFUXQ2jRsF770FJCey1V9gVSYi0RyASNdu2BTeNzZgBv/sdfPe7YVckIVMQiESJO1x1FUydGtw5fN11YVckzYCCQCQq3IPxgyZNCn7/53+GXZE0EwoCkai4/XaYMAGuvBJ++1s9bUx2UBCIRMGECXDrrcEJ4okTFQKyEwWBSEv3+9/DDTfA8OHBeEK6c1ji6C9CpCWbOjU4FHTGGfCnP0Hr1mFXJM2QgkCkpXrySbjkEvj+94PXOTlhVyTNlIJApCV67jkYMQKOOw6efhpyc8OuSJoxBYFIS/PKK3DOOdC/Pzz/PHToEHZF0swpCERaktdfh2HD4NBD4aWXoGPHsCuSLKAgEGkpysvh1FODoaRnz4bOncOuSLKEgkCkJVi4EIYMCTb+JSWw775hVyRZREEgku3eey+4Mig3NwgBPVxGGklBIJLN/v53KCwMRhQtKYFevcKuSLKQgkAkG7kHdwwXFkL79jBnDhx+eNhVSZZSEIhkmy1bgjGDrrwSBg8OThL37Rt2VZLFGgwCM3vYzNaa2aJa0zqb2WwzWxr7Xefjjcysxszmx35mpbNwkUj68MPgJrE//Sl41vCsWbDnnmFXJVkukT2CKcDJcdNuAkrc/RCgJPa+LlvcvX/sZ2jyZYoIL70ExxwDy5cHdw7/4hcaQE7SosG/InefC2yImzwMmBp7PRU4M811ich227bBuHFwyinQo8fX9wuIpEmyXyf2dffVALHfXetpl2tm5Wb2DzPbZViYWXGsbfm6deuSLEukhdm4Ec46K3ia2PnnQ1kZfOtbYVclLUybDPef5+6rzKwX8L9mttDd36+robtPBiYDFBQUeIbrEmn+Fi2Cs88OzgtMnBg8a1gPlJEMSHaPYI2Z7Q8Q+722rkbuvir2+wOgFDg6yeWJRMuTT8LAgfD558GloVdfrRCQjEk2CGYBI2OvRwLPxDcws73MrF3s9T7A8cA7SS5PJBqqq+GnPw2eJnbUUVBRASecEHZV0sIlcvnodKAMOMzMKs3sUuC3wPfNbCnw/dh7zKzAzP4Ym7U3UG5mbwFzgN+6u4JApD5r1wZDRfzud8FhoDlzoFu3sKuSCGjwHIG7n1fPR0V1tC0HLou9/jtwZErViUTFvHnwgx/A+vXw6KNw4YVhVyQRoouQRcLkDpMmwYknQtu2wVVBCgFpYgoCkbDMnw/f+Q6MGQPf/W5wf0D//mFXJRGkIBBpahs2BOMEHXMMLFkCDz0UPFJSD5KRkGT6PgIR2a6mBh5+GG6+GT79NAiD226DveocqkukySgIRJrCvHnBlUDl5cHhoPvug379wq5KBNChIZHMWrsWLr00uDns449h2jR49VWFgDQrCgKRTKiuhnvvhUMPDS4HveGG4HzA+efrDmFpdnRoSCTd5s4NDgMtXBjcIDZxop4eJs2a9ghE0uXjj4Nv/P/xH/DZZ/DUU8EzBBQC0swpCERSVVUF//3fcNhhwcb/F7+Ad94Jho/WYSDJAjo0JJKKl1+GsWOD4/9Dh8Jdd0GvXmFXJdIo2iMQaazq6mCY6EGDYMiQ4P6A55+HZ55RCEhWUhCIJOrTT+HOO4ON/fDhsG5dcCJ40SI9OlKymg4NiTTkvfeCDf6UKfDFF3DSScENYaedBq1bh12dSMoUBCJ1cQ+eB3DXXcFhn5yc4Iqga67RwHDS4igIRGr78kuYPh3uvhsWLIAuXeC//gtGj4b99gu7OpGMUBCIAKxZEzwXYNKkYFiII48MRgU9/3zIzQ27OpGMUhBItL31VvDt/89/Du4HOP10uPba4PkAugdAIkJBINFTVQUvvgj33BOcB2jfHi6/PLgf4NBDw65OpMkpCCQaNm4MNv4zZwa/P/sMevQI7gi+7DI9E0AiTUEgLVdlJcyaFdzoNWcObN0KXbvCD38IZ54Z3AyWkxN2lSKhUxBIy+EOb78dbPhnzgweAgNwyCHBcf9hw4LnAujaf5GdKAgku9XUwOuvBxv/Z56B998Ppn/72zB+fLDxP/xwnfgV2QUFgWSfzZth9uzgW/9zz8Enn0DbtlBUFDwA5owzoFu3sKsUyRoKAmn+NmyAN98Mfl5/PQiBLVugU6dgmIftx/s7dgy7UpGspCCQ5mXdOqioCDb6238vX/715wcdFDwDeNiw4AEwOtkrkjIFgYTnX/8KNva1N/yVlV9/fvDBMGBAMLxDfn7w07lzePWKtFAJBYGZPQycDqx19yNi0zoDTwA9geXAj9z90zrmHQn8Z+ztr919auplS0OmLZzGLSW3sHLjSvI65TGuaBwjjhwRTjE1NcFjHOfP33mjv3p18LlZcCPXiScGG/tjjgkGdttzz3DqFYmYRPcIpgD3AY/WmnYTUOLuvzWzm2Lvf1Z7plhY/BIoAByoMLNZdQWGpM+0hdMofraYzR9shuWwoucKijcXAzQ6DMrKyigtLaWwsJBBgwZ9/YE7bNoUbMz/9a+vf2q/3/563TrKtm2jFCg0Y1CfPvC97wUb/Pz8YKO/xx6p1ZOEdPaVif4y1Wcm+83mvpui/+YqoSBw97lm1jNu8jCgMPZ6KlBKXBAAQ4DZ7r4BwMxmAycD05OqVhJyS8ktbP5gMzYFqIHWreDUYzeztPxqKFyfcD9lH35I0f33U1VdTdvWrSk54QQGbd369QZ+8+ZvztSmTTBK5/77Q14eDBhAWXU1RY89RlVNDW3btaPkwQeT+p+srKyMoqIiqqqqaNu2LSUlJUn/z5rOvjLRX6b6zGS/2dx3U/TfnKVyjmBfd18N4O6rzaxrHW0OAD6q9b4yNu0bzKwYKAbIy8tLoSxZuXFlcLCuJtgN822QPw9u5lN4+pqE+ykFqoJuqKqupvTttxl0xBHBTVn77ff1Br/26732glY7P/iudPx4qrZto2bbNqqqqigtLU3qf7DS0lKqqqqoqalJqZ9095WJ/jLVZyb7zea+m6L/5izTJ4vruovH62ro7pOByQAFBQV1tpHE5HXKY0XPFXgboAZqWsP44fB47+68NfqthPspfOMN2p511o5vSIXPPBM8p7eRCgsLadu27df9FBY2uo909pPuvjLRX6b6zGS/2dx3U/TfnJl7Ytvc2KGh52qdLF4CFMb2BvYHSt39sLh5zou1+XHs/R9i7XZ5aKigoMDLtw8PII0Wf46AntC+V3smnzE5fecIGqm59ZPuvjLRX6b6zGS/2dx3U/SfSWZW4e4FSc2bQhDcCayvdbK4s7vfGDdPZ6ACyI9NehM4Zvs5g/ooCFLXrK4aEpGMy3gQmNl0ghPD+wBrCK4Emgk8CeQBK4EfuvsGMysArnD3y2LzXgL8PNbVOHd/pKHlKQhERBqnSfYImpKCQESkcVIJglYNNxERkZZMQSAiEnEKAhGRiFMQiIhEnIJARCTiFAQiIhGnIBARiTgFgYhIxCkIREQiTkEgIhJxCgIRkYhTEIiIRJyCQEQk4hQEIiIRpyAQEYk4BYGISMQpCEREIk5BICIScQoCEZGIUxCIiEScgkBEJOIUBCIiEacgEBGJOAWBiEjEKQhERCJOQSAiEnEKAhGRiEspCMzsGjNbZGZvm9m1dXxeaGYbzWx+7OcXqSxPRETSr02yM5rZEcDlwACgCvirmT3v7kvjmv7N3U9PoUYREcmgVPYIegP/cPfN7l4NvAqclZ6yRESkqaQSBIuAE81sbzNrD5wK9Kij3SAze8vMXjSzviksT0REMiDpQ0PuvtjM7gBmA5uAt4DquGZvAge6+yYzOxWYCRxSV39mVgwUA+Tl5SVbloiINFJKJ4vd/SF3z3f3E4ENwNK4zz9z902x1y8AOWa2Tz19TXb3Ancv6NKlSypliYhII6R61VDX2O884Gxgetzn+5mZxV4PiC1vfSrLFBGR9Er60FDM/5jZ3sBW4Ep3/9TMrgBw9weAc4DRZlYNbAHOdXdPcZkiIpJGKQWBu3+njmkP1Hp9H3BfKssQEZHM0p3FIiIRpyAQEYk4BYGISMQpCEREIk5BICIScQoCEZGIUxCIiEScgkBEJOIUBCIiEacgEBGJOAWBiEjEKQhERCJOQSAiEnEKAhGRiFMQiIhEnIJARCTiFAQiIhGnIBARiTgFgYhIxCkIREQiTkEgIhJxCgIRkYhTEIiIRJyCQEQk4hQEIiIRpyAQEYk4BYGISMQpCEREIi6lIDCza8xskZm9bWbX1vG5mdlEM1tmZgvMLD+V5YmISPolHQRmdgRwOTAAOAo43cwOiWt2CnBI7KcYmJTs8kREJDNS2SPoDfzD3Te7ezXwKnBWXJthwKMe+Aewp5ntn8IyRUQkzdqkMO8iYJyZ7Q1sAU4FyuPaHAB8VOt9ZWza6vjOzKyYYK8B4CszW5RCbU1hH+CTsItIgOpML9WZXqozfQ5Ldsakg8DdF5vZHcBsYBPwFlAd18zqmrWe/iYDkwHMrNzdC5KtrSlkQ42gOtNNdaaX6kwfM4v/Ip6wlE4Wu/tD7p7v7icCG4ClcU0qgR613ncHVqWyTBERSa9UrxrqGvudB5wNTI9rMgu4KHb10EBgo7t/47CQiIiEJ5VzBAD/EztHsBW40t0/NbMrANz9AeAFgnMHy4DNwMUJ9js5xbqaQjbUCKoz3VRneqnO9Em6RnOv85C9iIhEhO4sFhGJOAWBiEjEhRoEZtbazP7PzJ6r47N2ZvZEbHiKeWbWs+kr3FHLruocZWbrzGx+7OeykGpcbmYLYzV84zKy5jLcRwJ1FprZxlrr8xch1bmnmc0ws3fNbLGZDYr7vLmsz4bqDH19mtlhtZY/38w+ix+SJuz1mWCNoa/LWB0/iQ3rs8jMpptZbtznjd52pnqyOFXXAIuBjnV8dinwqbsfbGbnAncAw5uyuFp2VSfAE+5+VRPWU5+T3L2+m15qD/fxbYLhPr7dVIXF2VWdAH9z99ObrJq63QP81d3PMbO2QPu4z5vL+myoTgh5fbr7EqA/BF+qgI+Bp+Oahbo+E6wRQl6XZnYAMBbo4+5bzOxJ4FxgSq1mjd52hrZHYGbdgdOAP9bTZBgwNfZ6BlBkZnXdoJZRCdSZLTTcR4LMrCNwIvAQgLtXufu/45qFvj4TrLO5KQLed/cVcdNDX5+11Fdjc9EG2M3M2hAEf/y9WY3edoZ5aOhu4EZgWz2f7xieIjaW0UZg76YpbScN1Qnwg9ju7Awz67GLdpnkwMtmVmHBcB3x6hvuo6k1VCfAIDN7y8xeNLO+TVlcTC9gHfBI7JDgH82sQ1yb5rA+E6kTwl+ftZ3LN+83guaxPrerr0YIeV26+8fABGAlwVA9G9395bhmjd52hhIEZnY6sNbdK3bVrI5pTXqta4J1Pgv0dPd+wCt8ncRN7Xh3zyfYxb7SzE6M+zz09RnTUJ1vAge6+1HAvcDMpi6Q4BtXPjDJ3Y8GvgBuimvTHNZnInU2h/UJQOzQ1VDgL3V9XMe0Jv/7bKDG0Nelme1F8I3/IKAb0MHMLohvVsesu1yXYe0RHA8MNbPlwOPAd83ssbg2O4aniO0CdSIYxqIpNVinu693969ibx8EjmnaEnfUsSr2ey3Bsc0BcU2axXAfDdXp7p+5+6bY6xeAHDPbp4nLrAQq3X1e7P0Mgg1ufJuw12eDdTaT9bndKcCb7r6mjs+aw/qEXdTYTNbl94AP3X2du28FngKOi2vT6G1nKEHg7je7e3d370mwG/a/7h6farOAkbHX58TaNOk3hETqjDuOOZTgpHKTMrMOZrbH9tfAYILRYWsLfbiPROo0s/22H880swEEf6Prm7JOd/8X8JGZbR/NsQh4J65Z6OszkTqbw/qs5TzqP+QS+vqMqbfGZrIuVwIDzax9rJYivrnNafS2M+yrhnZiZrcD5e4+i+AE2J/MbBm2BAt2AAAAn0lEQVRBmp0banG1xNU51syGEoy8ugEYFUJJ+wJPx/5G2wB/dve/WnqG+2jqOs8BRptZNcHw5uc29ReAmKuBabFDBR8AFzfD9ZlInc1ifZpZe+D7wI9rTWtW6zOBGkNfl+4+z8xmEBymqgb+D5ic6rZTQ0yIiESc7iwWEYk4BYGISMQpCEREIk5BICIScQoCEZGIUxCIiEScgkBEJOL+Hw3JYpu8E6vuAAAAAElFTkSuQmCC\n",
+      "text/plain": [
+       "<Figure size 432x288 with 1 Axes>"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "[ 6.87984693 11.28998941  1.3384411   3.        ]\n",
+      "[ 7.45 10.    0.    3.  ]\n"
+     ]
+    }
+   ],
+   "source": [
+    "x_init  = 5.0\n",
+    "y_init  = 10.0\n",
+    "theta_init = 0.0\n",
+    "v_init     = 2.0\n",
+    "a_input    = 1.0\n",
+    "phi_input  = 0.5\n",
+    "\n",
+    "state_init = [x_init, y_init, theta_init, v_init]\n",
+    "state_predictions_nonlinear = nonlinear_vehicle_model(state_init, [a_input, phi_input], 10)\n",
+    "state_predictions_linear = linear_vehicle_model(A, B, state_init, [a_input, phi_input], 10)\n",
+    "\n",
+    "make_model_comparison_plot(state_predictions_nonlinear, state_predictions_linear)\n",
+    "\n",
+    "# The problem didn't ask you for the actual values, but it is useful to see where we end up after ten time step in both cases.\n",
+    "\n",
+    "print(state_predictions_nonlinear[10])\n",
+    "print(state_predictions_linear[10])\n",
+    "\n",
+    "\n"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Problem 7: Image Stitching"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "This section of the notebook continues the image stiching problem. Be sure to have a `figures` folder in the same directory as the notebook. The `figures` folder should contain the files:\n",
+    "\n",
+    "    Berkeley_banner_1.jpg\n",
+    "    Berkeley_banner_2.jpg\n",
+    "    stacked_pieces.jpg\n",
+    "    lefthalfpic.jpg\n",
+    "    righthalfpic.jpg\n",
+    "    \n",
+    "Note: This structure is present in the provided HW2 zip file."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Run the next block of code before proceeding\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "tags": [
+     "worksheet-0"
+    ]
+   },
+   "outputs": [],
+   "source": [
+    "import numpy as np\n",
+    "import numpy.matlib\n",
+    "import matplotlib.pyplot as plt\n",
+    "from mpl_toolkits.mplot3d import Axes3D\n",
+    "from numpy import pi, cos, exp, sin\n",
+    "import matplotlib.image as mpimg\n",
+    "import matplotlib.transforms as mtransforms\n",
+    "\n",
+    "\n",
+    "#%matplotlib inline\n",
+    "\n",
+    "#loading images\n",
+    "image1=mpimg.imread('figures/Berkeley_banner_1.jpg')\n",
+    "image1=image1/255.0\n",
+    "image2=mpimg.imread('figures/Berkeley_banner_2.jpg')\n",
+    "image2=image2/255.0\n",
+    "image_stack=mpimg.imread('figures/stacked_pieces.jpg')\n",
+    "image_stack=image_stack/255.0\n",
+    "\n",
+    "\n",
+    "image1_marked=mpimg.imread('figures/lefthalfpic.jpg')\n",
+    "image1_marked=image1_marked/255.0\n",
+    "image2_marked=mpimg.imread('figures/righthalfpic.jpg')\n",
+    "image2_marked=image2_marked/255.0\n",
+    "\n",
+    "def euclidean_transform_2to1(transform_mat,translation,image,position,LL,UL):\n",
+    "    new_position=np.round(transform_mat.dot(position)+translation)\n",
+    "    new_position=new_position.astype(int)\n",
+    "\n",
+    "    \n",
+    "    if (new_position>=LL).all() and (new_position<UL).all():\n",
+    "        values=image[new_position[0][0],new_position[1][0],:]\n",
+    "    else:\n",
+    "        values=np.array([2.0,2.0,2.0])\n",
+    "    \n",
+    "    return values\n",
+    "\n",
+    "def euclidean_transform_1to2(transform_mat,translation,image,position,LL,UL):\n",
+    "    transform_mat_inv=np.linalg.inv(transform_mat)\n",
+    "    new_position=np.round(transform_mat_inv.dot(position-translation))\n",
+    "    new_position=new_position.astype(int)\n",
+    "    \n",
+    "    if (new_position>=LL).all() and (new_position<UL).all():\n",
+    "        values=image[new_position[0][0],new_position[1][0],:]\n",
+    "    else:\n",
+    "        values=np.array([2.0,2.0,2.0])\n",
+    "    \n",
+    "    return values\n",
+    "\n",
+    "def solve(A,b):\n",
+    "    try:\n",
+    "        z = np.linalg.solve(A,b)\n",
+    "    except:\n",
+    "        raise ValueError('Rows are not linearly independent. Cannot solve system of linear equations uniquely. :)')\n",
+    "    return z"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "We will stick to a simple example and just consider stitching two images (if you can stitch two pictures, then you could conceivably stitch more by applying the same technique over and over again).\n",
+    "\n",
+    "Daniel decided to take an amazing picture of the Campanile overlooking the bay. Unfortunately, the field of view of his camera was not large enough to capture the entire scene, so he decided to take two pictues and stich them together. \n",
+    "\n",
+    "The next block will display the two images."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "tags": [
+     "worksheet-0"
+    ]
+   },
+   "outputs": [],
+   "source": [
+    "plt.figure(figsize=(20,40))\n",
+    "\n",
+    "plt.subplot(311)\n",
+    "plt.imshow(image1)\n",
+    "\n",
+    "plt.subplot(312)\n",
+    "plt.imshow(image2)\n",
+    "\n",
+    "plt.subplot(313)\n",
+    "plt.imshow(image_stack)\n",
+    "\n",
+    "plt.show() "
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Once you apply Marcela's algorithm on the two images you get the following result (run the next block):"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "plt.figure(figsize=(20,30))\n",
+    "\n",
+    "plt.subplot(211)\n",
+    "plt.imshow(image1_marked)\n",
+    "\n",
+    "plt.subplot(212)\n",
+    "plt.imshow(image2_marked)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "As you can see Marcela's algorithm was able to find four common points between the two images. These points expressed in the coordinates of the first image and second image are\n",
+    "\n",
+    "$\\begin{align} \n",
+    "&&\\vec{p_1}=\\begin{bmatrix} 200 \\\\ 700 \\end{bmatrix}\n",
+    "&&\\vec{p_2}=\\begin{bmatrix} 310 \\\\ 620 \\end{bmatrix} \n",
+    "&&\\vec{p_3}=\\begin{bmatrix} 390 \\\\ 660 \\end{bmatrix}\n",
+    "&&\\vec{p_4}=\\begin{bmatrix} 460 \\\\ 630 \\end{bmatrix}\\\\\n",
+    "&&\\vec{q_1}=\\begin{bmatrix} 162.2976 \\\\ 565.8862 \\end{bmatrix}\n",
+    "&&\\vec{q_2}=\\begin{bmatrix} 285.4283 \\\\ 458.7469 \\end{bmatrix} \n",
+    "&&\\vec{q_3}=\\begin{bmatrix} 385.2465 \\\\ 498.1973 \\end{bmatrix}\n",
+    "&&\\vec{q_4}=\\begin{bmatrix} 465.7892 \\\\ 455.0132 \\end{bmatrix}\n",
+    "\\end{align}$\n",
+    "\n",
+    "It should be noted that in relation to the image the positive x-axis is down and the positive y-axis is right. This will have no bearing as to how you solve the problem, however it helps in interpreting what the numbers mean relative to the image you are seeing.\n",
+    "\n",
+    "Using the points determine the parameters $R_{11},R_{12},R_{21},R_{22},T_x,T_y$ that map the points from the first image to the points in the second image by solving an appropriate system of equations. Hint: you do not need all the points to recover the parameters. "
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Note that the following is a general template for solving for 6 unknowns from 6 equations represented as Az = b.\n",
+    "# You do not have to use the following code exactly. \n",
+    "# All you need to do is to find parameters R_11, R_12, R_21, R_22, T_x, T_y. \n",
+    "# If you prefer finding them another way it is fine.\n",
+    "\n",
+    "A = np.array([[200, 700, 0, 0, 1, 0],\n",
+    "              [0, 0, 200, 700, 0, 1 ],\n",
+    "              [310, 620, 0, 0, 1, 0],\n",
+    "              [0, 0, 310, 620, 0, 1 ],\n",
+    "              [460, 630, 0, 0, 1, 0],\n",
+    "              [0, 0, 460, 630, 0, 1 ]])\n",
+    "\n",
+    "b = np.array([[162.2976], [565.8862], [285.4283], [458.7469], [465.7892], [455.0132]])\n",
+    "\n",
+    "A = A.astype(float)\n",
+    "b = b.astype(float)\n",
+    "\n",
+    "# solve the linear system for the coefficiens\n",
+    "z = solve(A,b)\n",
+    "\n",
+    "#Parameters for our transformation\n",
+    "R_11 = z[0,0]\n",
+    "R_12 = z[1,0]\n",
+    "R_21 = z[2,0]\n",
+    "R_22 = z[3,0]\n",
+    "T_x  = z[4,0]\n",
+    "T_y  = z[5,0]"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Stitch the images using the transformation you found by running the code below.\n",
+    "\n",
+    "### Note that it takes about 40 seconds for the block to finish running on a modern laptop.\n",
+    "\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "scrolled": false
+   },
+   "outputs": [],
+   "source": [
+    "matrix_transform=np.array([[R_11,R_12],[R_21,R_22]])\n",
+    "translation=np.array([T_x,T_y])\n",
+    "\n",
+    "#Creating image canvas (the image will be constructed on this)\n",
+    "num_row,num_col,blah=image1.shape\n",
+    "image_rec=1.0*np.ones((int(num_row),int(num_col),3))\n",
+    "\n",
+    "#Reconstructing the original image\n",
+    "\n",
+    "LL=np.array([[0],[0]]) #lower limit on image domain\n",
+    "UL=np.array([[num_row],[num_col]]) #upper limit on image domain\n",
+    "\n",
+    "for row in range(0,int(num_row)):\n",
+    "    for col in range(0,int(num_col)):\n",
+    "        #notice that the position is in terms of x and y, so the c  \n",
+    "        position=np.array([[row],[col]])       \n",
+    "        if image1[row,col,0] > 0.995 and image1[row,col,1] > 0.995 and image1[row,col,2] > 0.995:\n",
+    "            temp = euclidean_transform_2to1(matrix_transform,translation,image2,position,LL,UL)\n",
+    "            image_rec[row,col,:] = temp\n",
+    "        else:\n",
+    "            image_rec[row,col,:] = image1[row,col,:]\n",
+    "        \n",
+    "\n",
+    "plt.figure(figsize=(20,20))\n",
+    "plt.imshow(image_rec)\n",
+    "plt.axis('on')\n",
+    "plt.show()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Part E: Failure Mode Points\n",
+    "\n",
+    "$\\begin{align} \n",
+    "&&\\vec{p_1}=\\begin{bmatrix} 390 \\\\ 660 \\end{bmatrix}\n",
+    "&&\\vec{p_2}=\\begin{bmatrix} 425 \\\\ 645 \\end{bmatrix}\n",
+    "&&\\vec{p_3}=\\begin{bmatrix} 460 \\\\ 630 \\end{bmatrix}\\\\\n",
+    "&&\\vec{q_1}=\\begin{bmatrix} 385 \\\\ 450 \\end{bmatrix}\n",
+    "&&\\vec{q_2}=\\begin{bmatrix} 425 \\\\ 480 \\end{bmatrix}\n",
+    "&&\\vec{q_3}=\\begin{bmatrix} 465 \\\\ 510 \\end{bmatrix}\n",
+    "\\end{align}$"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Note that the following is a general template for solving for 6 unknowns from 6 equations represented as Az = b.\n",
+    "# You do not have to use the following code exactly. \n",
+    "# All you need to do is to find parameters R_11, R_12, R_21, R_22, T_x, T_y. \n",
+    "# If you prefer finding them another way it is fine.\n",
+    "\n",
+    "# fill in the entries\n",
+    "A = np.array([[390,660,0,0,1,0],\n",
+    "              [0,0,390,660,0,1],\n",
+    "              [425,645,0,0,1,0],\n",
+    "              [0,0,425,645,0,1],\n",
+    "              [460,630,0,0,1,0],\n",
+    "              [0,0,460,630,0,1]])\n",
+    "\n",
+    "# fill in the entries\n",
+    "b = np.array([[385],[450],[425],[480],[465],[510]])\n",
+    "\n",
+    "A = A.astype(float)\n",
+    "b = b.astype(float)\n",
+    "\n",
+    "# solve the linear system for the coefficiens\n",
+    "z = solve(A,b)\n",
+    "\n",
+    "#Parameters for our transformation\n",
+    "R_11 = z[0,0]\n",
+    "R_12 = z[1,0]\n",
+    "R_21 = z[2,0]\n",
+    "R_22 = z[3,0]\n",
+    "T_x  = z[4,0]\n",
+    "T_y  = z[5,0]"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": []
+  }
+ ],
+ "metadata": {
+  "anaconda-cloud": {},
+  "kernel_info": {
+   "name": "python3"
+  },
+  "kernelspec": {
+   "display_name": "Python 3",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.6.5"
+  },
+  "name": "graphs_for_SOE.ipynb",
+  "nteract": {
+   "version": "0.11.6"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 1
+}

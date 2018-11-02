@@ -1,0 +1,51 @@
+\documentclass{article}
+\usepackage[left=3cm, right=3cm, top=3cm]{geometry}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{xcolor}
+\begin{document}
+
+{\Large 4. Temperature Sensor} \\[.5cm]
+{\large (a) $V_{out} = \frac{V_s R_2}{R_1 + R_2}$} \\
+
+The current through the circuit is $I = \frac{V_s}{R_{eq}}$, where $R_{eq} = R_1 + R_2$, so $I = \frac{V_s}{R_1 + R_2}$ \\
+
+So, $V_{out}$, which measures the voltage drop over $R_2$, is equal to (or we could've used the Voltage Divider formula directly to obtain):
+$$V_2 = I_2\cdot R_2 = I\cdot R_2 = \frac{V_s}{R_1 + R_2}\cdot R_2 = \frac{V_s R_2}{R_1 + R_2}$$
+
+Thus, $V_{out} = V_2 = \frac{V_s R_2}{R_1 + R_2}$ \\[.5cm]
+{\large (b) $T = \frac{V_sR_o - V_{out}R_1 - V_{out}R_o}{(V_{out}-V_s)R_o\alpha}$} \\
+
+Similarly, the current through the circuit is $I = \frac{V_s}{R_{eq}}$, where $R_{eq} = R_1 + R_2 = R_1 + R_o(1+\alpha T)$, so $I = \frac{V_s}{R_1 + R_o(1+\alpha T)}$ \\
+
+So, $V_{out}$, which measures the voltage drop over $R_2$, is equal to:
+$$V_2 = I_2\cdot R_2 = I\cdot R_2 = \frac{V_s}{R_1 + R_o(1+\alpha T)}\cdot R_o(1+\alpha T) = \frac{V_s R_o(1+\alpha T)}{R_1 + R_o(1+\alpha T)}$$
+
+Thus, $V_{out} = V_2 = \frac{V_s R_o(1+\alpha T)}{R_1 + R_o(1+\alpha T)}$, which gives us that: $V_{out}\cdot (R_1 + R_o(1+\alpha T)) = V_s R_o(1+\alpha T)$ \\
+
+So, $V_{out}R_1 + V_{out}R_o + V_{out}R_o\alpha T = V_sR_o + V_sR_o\alpha T$, which gives:
+$$V_{out}R_o\alpha T - V_sR_o\alpha T = V_sR_o - V_{out}R_1 - V_{out}R_o$$
+$$\implies (V_{out}-V_s)R_o\alpha\cdot T = V_sR_o - V_{out}R_1 - V_{out}R_o$$
+$$\implies T = \frac{V_sR_o - V_{out}R_1 - V_{out}R_o}{(V_{out}-V_s)R_o\alpha}$$ \\
+{\large (c) $T = \frac{V_sR_o - V_{out}R_1 - V_{out}R_o}{- V_sR_o\alpha + V_{out}R_1\beta + V_{out}R_o\alpha}$} \\
+
+Again, similarly, the current through the circuit is $I = \frac{V_s}{R_{eq}}$, where $R_{eq} = R_1' + R_2 = R_1(1+\beta T) + R_o(1+\alpha T)$, so $I = \frac{V_s}{R_1(1+\beta T) + R_o(1+\alpha T)}$ \\
+
+So, $V_{out}$, which measures the voltage drop over $R_2$, is equal to:
+$$V_2 = I_2\cdot R_2 = I\cdot R_2 = \frac{V_s}{R_1(1+\beta T) + R_o(1+\alpha T)}\cdot R_o(1+\alpha T) = \frac{V_s R_o(1+\alpha T)}{R_1(1+\beta T) + R_o(1+\alpha T)}$$
+
+Thus, $V_{out} = V_2 = \frac{V_s R_o(1+\alpha T)}{R_1(1+\beta T) + R_o(1+\alpha T)}$, which gives us that:
+$$V_{out}\cdot(R_1(1+\beta T) + R_o(1+\alpha T)) = V_s R_o(1+\alpha T)$$
+$$\implies V_{out}R_1 + V_{out}R_1\beta T + V_{out}R_o + V_{out}R_o\alpha T = V_sR_o + V_sR_o\alpha T$$
+$$\implies (V_{out}R_1\beta + V_{out}R_o\alpha - V_sR_o\alpha)\cdot T = V_sR_o - V_{out}R_1 - V_{out}R_o$$
+$$\implies T = \frac{V_sR_o - V_{out}R_1 - V_{out}R_o}{- V_sR_o\alpha + V_{out}R_1\beta + V_{out}R_o\alpha}$$ \\
+{\large (d) No, it can't. } \\
+
+Here, we use the derived formula of voltage dividers directly to obtain the voltage drop over $R_2$:
+$$ V_2 = \frac{V_s\cdot R_{o2}\cdot(1+\alpha T)}{(R_{o1} + R_{o2})\cdot(1+\alpha T)} = \frac{V_sR_{o2}}{R_{o1} + R_{o2}}$$
+
+Thus, $V_{out} = V_2 = \frac{V_sR_{o2}}{R_{o1} + R_{o2}}$, which is independent of the variable $T$, which implies that we cannot express the temperature $T$ as an equation in terms of the measurable variables. Therefore, this circuit (specifically the measurements of $V_{out}$) cannot be used to measure temperature. \\
+
+
+
+\end{document}

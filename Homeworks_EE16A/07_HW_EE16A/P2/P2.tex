@@ -1,0 +1,70 @@
+\documentclass{article}
+\usepackage[left=3cm, right=3cm, top=3cm]{geometry}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{xcolor}
+\begin{document}
+
+{\Large 2. Cell Phone Battery} \\[.5cm]
+(a) 35.1 hours \\
+
+Since $P = I\cdot V$, so we have $$I = \frac{P}{V} = \frac{0.3W}{3.8V} = 7.89*10^{-2} A = 78.9 mA$$
+
+Then, with $C = I\cdot t$, so we have
+$$t = \frac{C}{I} = \frac{2770 mAh}{78.9} = 35.1 hr$$
+
+Thus, a Pixel’s full battery will last 35.1 hours under regular usage conditions. \\[1cm]
+(b) $6.22*10^{22}$ electrons \\
+
+Since 2770 mAh = 2770 mAh $\cdot\ \frac{3600s}{1h} =
+9.972\cdot10^6$ mAs, and given that 1 mC = 1 mAs, \\
+
+so $C_{pixel} = 2770$ mAh = $9.972\cdot10^6$ mAs = $9.972\cdot10^6$ mC \\
+
+So, there are
+$\frac{C_{pixel}}{C_{electron}} = \frac{9.972\cdot10^3 C}{1.602\cdot10^{-19}C} = 6.22*10^{22}$
+usable electrons worth of charge. \\[1cm]
+(c) $3.79\cdot10^4$ J \\
+
+Since we could calculate that:
+$$E_{discharge} = P\cdot t = 0.3\ W\cdot35.1\ hr\cdot\frac{3600\ s}{1\ hr} = 3.79\cdot10^4\ Ws = 3.79\cdot10^4\ J$$
+
+Thus, we have that
+$$E_{charge} = E_{discharge} = 3.79\cdot10^4\ J$$
+
+So, $3.79\cdot10^4$ J is the energy necessary for recharging a completely discharged cell phone battery. \\[1cm]
+(d) $\$0.04$ \\
+
+The total energy used by recharging for 31 days is:
+$$E_{total} = E_{charge}\cdot 31 = 3.79\cdot10^4\ J\cdot31 = 1.175\cdot10^6\ J = 1.175\cdot10^6\ Ws$$
+
+So, we can transform its unit to get:
+$$E_{total} = 1.175\cdot10^6\ Ws\cdot\frac{1\ kW}{1000\ W}\cdot\frac{1\ hr}{3600\ s} = 0.326\ kWh$$
+
+Thus, I would need to pay $0.326\ kWh\cdot\frac{\$0.12}{1\ kWh} =
+\$0.04$ for recharging for the month of October. \pagebreak\\
+(e) \\[.3cm]
+First, $R = 200m\Omega = 200m\Omega\cdot\frac{1\Omega}{1000m\Omega} = 0.2\ \Omega$. We consider $R_{bat} = 1m\Omega, 1\Omega, 10k\Omega$ separately below. \\[.75cm]
+Case 1 ({\color{red} $R_{bat} = 1\ m\Omega$}): With $R_{eq} = R + R_{bat} = 200m\Omega + 1 m\Omega = 201 m\Omega$, so
+$$I_{bat} = I = \frac{V}{R_{eq}} = \frac{5V}{201m\Omega} = 24.88A$$
+
+So the power dissipated across $R_{bat}$ is:
+$$P_{bat} = I_{bat}V_{bat} = I_{bat}^2R_{bat} = (24.88A)^2\cdot1m\Omega = {\color{red} 0.62\ W}$$
+
+Thus, using the results we got from part (d), so it takes the battery $$t = \frac{E_{total}}{P} = \frac{3.79\cdot10^4\ Ws}{0.62W} = 6.11\cdot10^4s = 6.11\cdot10^4s\cdot\frac{1hr}{3600s} = {\color{red} 16.98\ hr}$$ \\[.5cm]
+Case 2 ({\color{red} $R_{bat} = 1\ \Omega$}): With $R_{eq} = R + R_{bat} = 0.2\Omega + 1 m\Omega = 1.2 m\Omega$, so
+$$I_{bat} = I = \frac{V}{R_{eq}} = \frac{5V}{1.2\Omega} = 4.17A$$
+
+So the power dissipated across $R_{bat}$ is:
+$$P_{bat} = I_{bat}V_{bat} = I_{bat}^2R_{bat} = (4.17A)^2\cdot1\Omega = {\color{red} 17.39\ W}$$
+
+Thus, using the results we got from part (d), so it takes the battery $$t = \frac{E_{total}}{P} = \frac{3.79\cdot10^4\ Ws}{17.39W} = 2.18\cdot10^3s = 2.18\cdot10^3s\cdot\frac{1hr}{3600s} = 0.605\ hr = {\color{red} 36.3\ min}$$ \\[.5cm]
+Case 3 ({\color{red} $R_{bat} = 10\ k\Omega$}): With $R_{eq} = R + R_{bat} = 0.2\Omega + 10k\Omega = 10000.2\ \Omega$, so
+$$I_{bat} = I = \frac{V}{R_{eq}} = \frac{5V}{10000.2\Omega} = 5.00\cdot10^{-4}\ A$$
+
+So the power dissipated across $R_{bat}$ is:
+$$P_{bat} = I_{bat}V_{bat} = I_{bat}^2R_{bat} = (5.00\cdot10^{-4}A)^2\cdot10k\Omega = {\color{red} 2.5\cdot10^{-3}\ W}$$
+
+Thus, using the results we got from part (d), so it takes the battery $$t = \frac{E_{total}}{P} = \frac{3.79\cdot10^4\ Ws}{2.5\cdot10^{-3} W} = 1.52\cdot10^7s = 1.52\cdot10^7s\cdot\frac{1hr}{3600s} = {\color{red} 4.22\cdot10^3\ hr}$$
+
+\end{document}

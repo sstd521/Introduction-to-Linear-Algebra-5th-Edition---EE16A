@@ -1,0 +1,21 @@
+{
+  "name": "Alan He",
+  "email": "xhe22@berkeley.edu",
+  "sid": "3033711308",
+  "q1a": "10",
+  "q1a-comment": "Completely correct",
+  "q2a": "10",
+  "q2a-comment": "Completely correct",
+  "q3a": "10",
+  "q3a-comment": "Completely correct",
+  "q3b": "10",
+  "q3b-comment": "Completely correct",
+  "q4a": "10",
+  "q4a-comment": "Completely correct",
+  "q4b": "10",
+  "q4b-comment": "Completely correct (same answer with the square roots cleaned up)",
+  "q4c": "10",
+  "q4c-comment": "Completely correct",
+  "q5a": "10",
+  "q5a-comment": "Completely correct"
+}
