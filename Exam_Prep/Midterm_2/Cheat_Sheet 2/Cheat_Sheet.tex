@@ -13,25 +13,26 @@
 	\item Ohm's Law: $V_{elem} = I_{elem}R$ (Volt = Ampere $\cdot$ Ohm $\Omega$)
 	\item Passive sign convention: Positive current should enter the positive terminal and exit the negative terminal of an element. Positive power means that power is dissipated, and negative power means that power is being generated.
 	\item Resistors: in series $R_{eq} = R_1+R_2$; in parallel $R_{eq} = R_1||R_2 = \frac{R_1R_2}{R_1+R_2}$
-	\item Steps for solving circuits
-	\begin{enumerate}
-		\item Pick a node and label it as u = 0 (“ground”), meaning that we will measure all of the voltages in the rest of the circuit relative to this point.
-		\item Label all remaining nodes as some “ui”, representing the voltage at each node relative to the ground node.
-		\item Label the current through every non-wire element in the circuit “in”.
-		\item Add $+/-$ labels (indicating direction of voltage measurement) on each non-wire element by following the passive sign convention.
-		\item Set up the relationship $A\vec{x}=\vec{b}$,where $\vec{x}$ is comprised of the $u_i$’s and $i_n$’s defined in the previous steps.
-		\item If there are $n$ nodes (including the ground node), use KCL on $(n-1)$ nodes to fill in $(n-1)$ rows of $A$ and $\vec{b}$.
-		\item If there are $m$ non-wire elements, use the IV relationships of each non-wire element to fill in the remaining $m$ equations (rows of $A$ and values of $\vec{b}$).
-		\item Solve with linear algebra!
-	\end{enumerate}
-	\item Voltage divider: $V_{out} = \frac{R_{out}}{R_1+R_{out}}\cdot V_s$
-	\item Current divider: $R_1,R_2$ in parallel with independent current source $I_s$, then $I_{R_2} = \frac{R_1}{R_1+R_2}I_s$
+	% \item Steps for solving circuits
+	% \begin{enumerate}
+	% 	\item Pick a node and label it as ``ground''.
+	% 	\item Label all remaining nodes as some $u_i$, representing the voltage relative to the ground node.
+	% 	\item Label the current through every {\color{blue} non-wire element} (= elements below) in the circuit $i_n$.
+	% 	\item Add $+/-$ labels (direction of voltage meas.) on each element by following the {\color{red} passive sign convention}.
+	% 	\item Set up $A\vec{x}=\vec{b}$, where $\vec{x}$ is comprised of the $u_i$’s and $i_n$’s defined in the previous steps.
+	% 	\item If there are $n$ nodes (including the ground node), use KCL on $(n-1)$ nodes to fill in $(n-1)$ rows of $A$ and $\vec{b}$.
+	% 	\item If there are $m$ elements, use the $IV$ relationship of each element to fill in the remaining $m$ equations (rows of $A$ and values of $\vec{b}$).
+	% 	\item Solve with linear algebra!
+	% \end{enumerate}
+	\item {\color{red} Voltage divider}: $V_{out} = \frac{R_{out}}{R_1+R_{out}}\cdot V_s$
+	%\item Current divider: $R_1,R_2$ in parallel with independent current source $I_s$, then $I_{R_2} = \frac{R_1}{R_1+R_2}I_s = \frac{R_1||R_2}{R_2}I_s$
 	\item $I = \frac{dQ}{dt}$ (Coulombs/second)
 	\item {\color{red} $R = \rho\cdot\frac{L}{A}$}
 	\item $P = VI = I^2R = \frac{V^2}{R} = \frac{dE}{dt} = V\frac{dQ}{dt}$
 \end{itemize}
 
-\noindent{\Large Thevenin/Norton Equivalence}
+\pagebreak
+\noindent{\Large Superposition and Equivalence}
 \begin{itemize}
 	\item Superposition: Zero all but 1 independent source (Voltage source: replace with a wire; Current source: replace with an open circuit)
 	\item Def 15.1 (equivalent circuit): If we pick two terminals within a circuit, we say that another circuit is equivalent to the original circuit if it exhibits the same $I-V$ relationship at those two terminals. (In short, Two circuits are equivalent if they have the same $I-V$ relationship.)
@@ -43,11 +44,12 @@
 	\begin{itemize}
 		\item Find $I_{No}$: Connect a short circuit across the two output terminals and measure the current through it. This measured $I_{SC}$ equals $I_{No}$.
 	\end{itemize}
-	\item For $R_{th}$ between nodes $a,b$:
+	\item For $R_{eq}$ between nodes $a,b$:
 	\begin{enumerate}
-		\item Calculate open-circuit voltage $V_{th}$ (possibly with superposition)
-		\item Calculate short-circuit current $I_{sc}$ (possibly with superposition)
-		\item Calculate $R_{th} = \frac{V_{th}}{I_{sc}}$
+		\item Calculate $V_{th}$ and $I_{no}$ (superposition if necessary), and then $R_{eq} = \frac{V_{th}}{I_{no}}$ \\
+		{\color{blue} N.B.} Works only if $\exists$ at least one independent source in the circuit. Else, $V_{th} = I_{no} = 0$.
+		\item Zero out {\color{red} all} independent sources and apply a $V_{test}$ or $I_{test}$ to calculate the resulting $I_{test}$ or $V_{test}$ respectively. $R_{eq} = \frac{V_{test}}{I_{test}}$. \\
+		{\color{blue} N.B.} Works for any circuit. When in doubt, use this.
 	\end{enumerate}
 	\item The power dissipated by the source in the original circuit is not the same as the power dissipated in the Thevenin equiv. circuit, but the power through $R_{load}$ is the same! Thevenin equiv. can be used to calculate the power through elements that are not part of the circuit that was transformed.
 	\item Extra: {\color{red} $R_{Th} = R_{No}$}; Norton $\rightarrow$ Thevenin: $V_{th} = I_{No}R_{No}$; Thevenin $\rightarrow$ Norton: $I_{No} = \frac{V_{Th}}{R_{Th}}$;
@@ -55,6 +57,7 @@
 	\item Extra: The power generated by the Thevenin equivalent circuit $\neq$ total power generated in the original circuit.
 \end{itemize}
 
+\pagebreak
 \noindent{\Large Capacitors}
 \begin{itemize}
 	\item $C = I\cdot t = \frac{P}{V}t = \frac{Energy}{V}$
@@ -69,7 +72,7 @@
 	\item Consider a square current $I_s$
 	\begin{itemize}
 		\item $I_s$ is constant from $t=0$ to $t = \frac{\tau}{2}$, so $V_c(t) = \frac{I_s}{C}t$ when $0\leq t\leq\frac{\tau}{2}$
-		\item Similarly, $V_c(t) = -\frac{I_s}{C}(t-\frac{\tau}{2} + \frac{I_s\tau}{2C}$ when $\frac{\tau}{2}<t<\tau$
+		\item Similarly, $V_c(t) = -\frac{I_s}{C}(t-\frac{\tau}{2}) + \frac{I_s\tau}{2C}$ when $\frac{\tau}{2}<t<\tau$
 	\end{itemize}
 
 \begin{figure} [h!]
@@ -82,8 +85,10 @@
 
 \end{itemize}
 
-\noindent{\Large Op-Amps and Golden Rules}
+\pagebreak
+\noindent{\Large Op-Amp and Golden Rules}
 \begin{itemize}
+	\item Apply KCL, then use Golden Rule(s) to find desired relationships.
 	\item Op-amp (operational amplifier): $A>1$ is the gain. Op-amp acts $\sim$ a comparator since $A$ is very large.
 \begin{figure} [h!]
 	\begin{center}
@@ -154,15 +159,21 @@
 
 \end{itemize}
 
+\pagebreak
 \noindent{\Large Extra Sanity Checks}
 \begin{itemize}
+	\item Always return to the 7-step {\color{red} nodal analysis} if stuck or unsure.
+	\item {\color{red} Care: Units!!!}
 	\item The choice of ground does not matter. When labeling the currents through branches, the direction you pick does not matter.
-	\item A Norton equivalent of a voltage source is not necessary, since a voltage source is a basic element. The Theevenin equivalent is just a voltage source with voltage $V_s$, that is, $R_{th}$ = 0.
-	\item A Thevenin equivalent of a voltage source is not necessary because a current source is a basic element and cannot be represented as a voltage source. The Norton equivalent is just a current source with current $I_s$, that is, $R_{no}$ = $\infty$.
+	\item A Norton equivalent of a voltage source is not necessary, since a voltage source is a basic element. The Thevenin equivalent is just a voltage source with voltage $V_s$, that is, $R_{th}$ = 0.
+	\item A Thevenin equivalent of a current source is not necessary because a current source is a basic element and cannot be represented as a voltage source. The Norton equivalent is just a current source with current $I_s$, that is, $R_{no}$ = $\infty$.
 	\item Make sure $V_{DD} > V_{SS}$ (equal is not really useful...)
 	\item We can connect an O-A to any other circuit, and the O-A will not disturb that circuit because it does not load the circuit (it is an open circuit). The output of the O-A can be connected to any other circuit (except a voltage source) to get the desired/expected voltage out of the O-A.
+	\item $\Longrightarrow$ current source should not enter a terminal directly (parallel with a resistor and then enter, Norton-Thev. equiv. into a voltage source with a resistor).
 	\item Positive gain $\iff$ non-inverting O-A; negative gain $\iff$ inverting O-A.
 	\item Incident Matrix is the transpose of the matrix created for nodal analysis.
+	\item Extra: Capacitors connected in series must have the same charge $Q$, and thus can calculate their voltage in proportion with $Q = CV$.
+	\item Ground is a reference, the point we define as 0 in a circuit. There's only 1 GND, so we can connect all the grounds. But, we can't even connect ground to other nodes that happens to be at $0V$.
 \end{itemize}
 
 \end{document}

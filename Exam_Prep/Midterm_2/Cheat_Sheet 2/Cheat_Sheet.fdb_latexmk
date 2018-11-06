@@ -1,12 +1,12 @@
 # Fdb version 3
-["pdflatex"] 1541118912 "Cheat_Sheet.tex" "Cheat_Sheet.pdf" "Cheat_Sheet" 1541118913
-  "/Users/Alan/Desktop/Periodic.png" 1540948773 78404 5155e888e410b3a3a7d7f55c1dfc28b4 ""
-  "/Users/Alan/Desktop/invert-or-not.png" 1541117522 206254 5dd9c1b93004f4c93edbb73e3807f53d ""
-  "/Users/Alan/Desktop/op-amp.png" 1540948874 33764 ad9c9e6b062b65fc8b4985aa8b73e6fc ""
-  "/Users/Alan/Desktop/opamp-invert.png" 1540950055 40429 bcf499400755ed0627e93aa6c4a431fc ""
-  "/Users/Alan/Desktop/opamp-neg.png" 1540949784 45761 b0827c713a859d9e6c76f3e3a382dfa4 ""
-  "/Users/Alan/Desktop/opamp-neuron.png" 1540956897 91924 c069e30ddca68a3fe6cd9105428224fd ""
-  "/Users/Alan/Desktop/opamp-unity.png" 1540957160 39802 ad2a4771ee419377b6ea6c0f237c58a8 ""
+["pdflatex"] 1541193586 "Cheat_Sheet.tex" "Cheat_Sheet.pdf" "Cheat_Sheet" 1541193586
+  "/Users/Alan/Desktop/Periodic" 0 -1 0 ""
+  "/Users/Alan/Desktop/invert-or-not" 0 -1 0 ""
+  "/Users/Alan/Desktop/op-amp" 0 -1 0 ""
+  "/Users/Alan/Desktop/opamp-invert" 0 -1 0 ""
+  "/Users/Alan/Desktop/opamp-neg" 0 -1 0 ""
+  "/Users/Alan/Desktop/opamp-neuron" 0 -1 0 ""
+  "/Users/Alan/Desktop/opamp-unity" 0 -1 0 ""
   "/usr/local/texlive/2018/texmf-dist/fonts/map/fontname/texfonts.map" 1511824771 3332 103109f5612ad95229751940c61aada0 ""
   "/usr/local/texlive/2018/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex7.tfm" 1480098698 1004 54797486969f23fa377b128694d548df ""
   "/usr/local/texlive/2018/texmf-dist/fonts/tfm/public/amsfonts/symbols/msam10.tfm" 1480098698 916 f87d7c45f9c908e672703b83b72241a3 ""
@@ -68,8 +68,8 @@
   "/usr/local/texlive/2018/texmf-var/fonts/map/pdftex/updmap/pdftex.map" 1523934492 2717033 f61a5287d9c22a39a74f1979fe3f905c ""
   "/usr/local/texlive/2018/texmf-var/web2c/pdftex/pdflatex.fmt" 1527634103 4220280 8f75fe68c9ae6a61c324fee8af685faa ""
   "/usr/local/texlive/2018/texmf.cnf" 1523934483 577 0b39adfd7c93507ff20c9c14c2f1a33f ""
-  "Cheat_Sheet.aux" 1541118913 859 fb9d6a2ac3acb686152e16b602b12a4f ""
-  "Cheat_Sheet.tex" 1541118912 10792 a04db380fd5e819b6d252d98680136d9 ""
+  "Cheat_Sheet.aux" 1541193586 859 bc473613553cfc5e5ab15be58da37850 ""
+  "Cheat_Sheet.tex" 1541193585 11774 2dfaabc8df6ebe9921ca8d90f3700150 ""
   (generated)
   "Cheat_Sheet.pdf"
   "Cheat_Sheet.aux"
