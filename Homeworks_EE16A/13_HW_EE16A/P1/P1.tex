@@ -1,0 +1,77 @@
+\documentclass{article}
+\usepackage[left=3cm, right=3cm, top=3cm]{geometry}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{mathrsfs}
+\usepackage{xcolor}
+\begin{document}
+
+{\Large 1. Recipe Reconnaissance} \\[.5cm]
+{\color{red} (a) 6; 6} \\
+
+Since $2\cdot3 = 6$, so we have 6 unknowns in the problem, and we need 6 linearly independent (assuming consistent) equations. \\[.5cm]
+{\color{red} (b)
+$D_e = 0.2386 \text{ eggs},\
+H_e = 0.0491 \text{ eggs},\
+D_s = 5.3571 \text{ g},\
+H_s = 10 \text{ g};\
+D_b = 10 \text{ g},\
+H_b = 10 \text{ g}$} \\
+
+Let the six unknowns be $D_e, D_s, D_b, H_e, H_s, H_b$, where $D_e$ represents the number of eggs in each Decadent Dwight (DD) cookie, $D_s$ represents the amount of sugar (in grams) in each DD cookie, and $D_b$ represents the amount of butter (in grams) in each DD cookie; $H_e$ represents the number of eggs in each Heavenly Hearst (HH) cookie, $H_s$ represents the amount of sugar (in grams) in each HH cookie, and $H_b$ represents the amount of butter (in grams) in each HH cookie. \\
+
+Since the bakery produces 40 Decadent Dwight and 50 Heavenly Hearst cookies each day, so we can calulate that the bakery produces $40\cdot7 = 280$ DD cookies and $50\cdot7 = 350$ HH cookies each week. Also, a 5-kg bag of sugar would cost $5\,kg\cdot\$5/kg = \$25$, and I'm basing units on dollars whenever dealing with money.
+\\
+
+Thus, from Bob the Baker, who buys a dozen ($=12$) eggs daily and a 5-kg ($=5000$g) bag of sugar weekly, so we have two {\color{blue} estimated} (approximate) equations:
+$$40 D_e + 50 H_e = 12$$
+$$280 D_s + 350 H_s = 5000$$
+
+Also, the master taster gives us two {\color{blue} exact} equations:
+$$D_b = 10$$
+$$H_b = 10$$
+
+Then, with the fact that
+12 eggs costs \$2, so each egg costs $\$\frac{1}{6}$,
+and similarly, each gram of sugar costs $\$\frac{5}{1000} = \$\frac{1}{200}$,
+each gram of butter costs $\$\frac{1}{100}$,
+and that each type of cookie are worth about \$0.2 in ingredients,
+so the approximate prices of each cookie's ingredients and the exact prices of the ingredients gives us two {\color{blue} estimated} equations:
+$$\frac{1}{6}D_e + \frac{1}{200}D_s + \frac{1}{100}D_b = 0.2$$
+$$\frac{1}{6}H_e + \frac{1}{200}H_s + \frac{1}{100}H_b = 0.2$$
+
+Finally, by the grapevine info, we have one more {\color{blue} approximate} equation:
+$$H_s = 10$$ \\
+
+Everything's setup as a least-squares problem, and we're estimating 4 variables $D_e, H_e, D_s, H_s$. Using iPython Notebook, we solve the equations. (For the purpose of iPython Notebook, we plug in the exact values of $D_b, H_b$ to obtain the following two approximate equations:
+$\frac{1}{6}D_e + \frac{1}{200}D_s = 0.1$, and
+$\frac{1}{6}H_e + \frac{1}{200}H_s = 0.1$) \\
+
+The result is:
+$$D_e = 0.2386 \text{ eggs}$$
+$$H_e = 0.0491 \text{ eggs}$$
+$$D_s = 5.3571 \text{ g}$$
+$$H_s = 10 \text{ g}$$
+
+with Sum Squared Residuals = 0.002867 and Average error for data points = 0.000573 \\[.5cm]
+{\color{red} (c) Less accurate} \\
+
+With the facts that Decadent Dwight is about 25 grams, Heavenly Hearst is about 24 grams, and that 1 egg = 50 grams, so we now have two additional {\color{blue} approximate} equations:
+$$50D_e + D_s + D_b = 25$$
+$$50H_e + H_s + H_b = 24$$
+
+Plug in the exactly amount of butter in both cookies, i.e. $D_b = H_b = 10$, we have that $50D_e + D_s = 15$, and $50H_e + H_s = 14$. \\
+
+Again, using iPython Notebook, we can solve for the result:
+$$D_e = 0.1946 \text{ eggs}$$
+$$H_e = 0.0822 \text{ eggs}$$
+$$D_s = 5.3572 \text{ g}$$
+$$H_s = 10 \text{ g}$$
+
+with Sum Squared Residuals = 0.033903 and Average error for data points = 0.004843 \\
+
+Here, the amount of eggs in each DD cookie is less than part (b), while the amount of eggs in each HH cookie is greater than part (b), while the amount of sugar in each type of cookie remains roughly the same. However, the new values are actually {\color{red} less accurate} with a greater average error.
+\\[.5cm]
+
+
+\end{document}

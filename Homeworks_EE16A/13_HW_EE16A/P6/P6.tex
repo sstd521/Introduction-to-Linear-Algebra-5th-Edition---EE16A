@@ -1,0 +1,108 @@
+\documentclass{article}
+\usepackage[left=3cm, right=3cm, top=3cm]{geometry}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{mathrsfs}
+\usepackage{xcolor}
+\begin{document}
+
+{\Large 6. OMP Exercise} \\[.5cm]
+{\large {\color{red} (a) $x_1 = \frac{19}{3},\
+ x_2 = 0,\
+ x_3 = 0,\
+ x_4 = \frac{8}{3}$ }} \\[.3cm]
+
+Given that $\mathbf{M} = \begin{bmatrix}
+	1 & 1 & 0 & -1 \\
+	1 & 0 & -1 & 0 \\
+	0 & 1 & 1 & 1
+\end{bmatrix}$ \\[.3cm]
+
+Iteration 1: \\
+
+Calculating the four inner products ($\vec{b}$ with every column of $\mathbf{M}$) gives us $[10, 7, -3, -1]$, and the largest value is at column 1. Thus, we have
+$\mathbf{A_1} = \begin{bmatrix}
+    1 \\
+ 	1 \\
+ 	0
+\end{bmatrix}$ and
+$\vec{b_1} = \vec{b} = \begin{bmatrix}
+	4 \\
+	6 \\
+ 	3
+\end{bmatrix}$.
+So, we have the least squares solution
+$\vec{x_1} =
+(\mathbf{A_1}^T\mathbf{A_1})^{-1}\mathbf{A_1}^T\,\vec{b_1} =
+\frac{1}{2}\cdot10 = 5$,
+which gives us that $x_1 = 5$, and so we have our estimate currently at $\vec{r_1} = 5x_1$ with the residue after first iteration being
+$\vec{y_1} =
+\vec{b_1} - \mathbf{A_1}\vec{x_1} = \begin{bmatrix}
+	-1 \\
+	1 \\
+	3
+\end{bmatrix} \neq \vec{0}$. \\[.3cm]
+
+Iteration 2: \\
+
+Again, calculate the four inner products ($\vec{y_1}$ with every column of $\mathbf{M}$) gives us $[0, 2, 2, 4]$, and the largest value is at column 4. Thus, we have
+$\mathbf{A_2} = \begin{bmatrix}
+	1 & -1 \\
+	1 & 0 \\
+	0 & 1
+\end{bmatrix}$ and
+$\vec{b_2} = \vec{b} = \begin{bmatrix}
+	4 \\
+	6 \\
+ 	3
+\end{bmatrix}$.
+So, we can calculate the least squares solution
+$\vec{x_2} = \begin{bmatrix}
+	19/3 \\
+	8/3
+\end{bmatrix}$,
+which gives us updated value that $x_1 = \frac{19}{3}$ and $x_4 = \frac{8}{3}$, and so the second residue is
+$\vec{y_2} =
+\vec{b_2} - \mathbf{A_2}\vec{x_2} = \begin{bmatrix}
+	1/3 \\
+	-1/3 \\
+	1/3
+\end{bmatrix}$ \\[.3cm]
+
+Since we are given that $\vec{x}$ has only 2 non-zero entries, so we're done, with
+{\color{red}
+$$x_1 = \frac{19}{3},\
+x_2 = 0,\
+x_3 = 0,\
+x_4 = \frac{8}{3}$$}
+
+Therefore, we have that:
+{\color{red}
+\begin{center}
+	$\vec{x} =
+	\begin{bmatrix}
+		19/3 \\
+		0 \\
+		0 \\
+		8/3
+	\end{bmatrix}$
+\end{center} }
+
+\noindent{\large {\color{red} (b)
+$\vec{x} = \mathbf{A}\cdot\text{OMP}(\mathbf{M}\mathbf{A}, \vec{b})$ } } \\
+
+Given matrix $\mathbf{A}$ and that $\vec{x} = \mathbf{A}\vec{x_a}$, we first calculate the inverse of $\mathbf{A},\ \mathbf{A}^{-1}$.
+Then, by multiplying both sides of the equation by $\mathbf{A}^{-1}$, we have that $\vec{x_a} = \mathbf{A}^{-1}\mathbf{A}\vec{x_a} = \mathbf{A}^{-1}\vec{x}$. \\
+
+Since we have that $\mathbf{M}\vec{x} = \vec{b}$, and since by definition, $\mathbf{A}\mathbf{A}^{-1} = \mathbf{I}$, so we have:
+$$(\mathbf{M}\mathbf{A})\vec{x_a} =
+\mathbf{M}\mathbf{A}\mathbf{A}^{-1}\vec{x} =
+\mathbf{M}\vec{x} = \vec{b}$$
+
+Now, since we are given that $\vec{x_a}$ is sparse, so our OMP function would successfully compute $\vec{x_a}$ by plugging in parameters $\mathbf{M}\mathbf{A}$ and $\vec{b}$, i.e. we can successfully determine
+$\vec{x_a} = \text{OMP}(\mathbf{M}\mathbf{A}, \vec{b})$. \\
+
+Finally, we can compute $\vec{x}$ back from $\vec{x_a}$ with the equation $\vec{x} = \mathbf{A}\vec{x_a}$. Therefore, in other words, we could compute $\vec{x}$ in this method:
+$$\vec{x} = \mathbf{A}\cdot\text{OMP}(\mathbf{M}\mathbf{A}, \vec{b})$$
+
+\end{document}

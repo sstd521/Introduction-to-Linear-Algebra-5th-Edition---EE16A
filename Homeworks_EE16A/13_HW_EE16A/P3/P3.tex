@@ -1,0 +1,55 @@
+\documentclass{article}
+\usepackage[left=3cm, right=3cm, top=3cm]{geometry}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{mathrsfs}
+\usepackage{xcolor}
+\begin{document}
+
+{\Large 3. Noise Cancelling Headphones} \\[.5cm]
+{\color{red} (a) $\vec{m} + \mathbb{R}\vec{\gamma} + \vec{n}$} \\
+
+The signal at the listener's ear is:
+$$\vec{s} = \vec{m} + \mathbb{R}\vec{\gamma} + \vec{n}$$
+{\color{red} (b) $\mathbb{R}\vec{\gamma} + \vec{n}$} \\
+
+In order to have a signal at the ear that matches the original music signal perfectly, we should aim to minimize:
+$$\mathbb{R}\vec{\gamma} + \vec{n}$$
+{\color{red} (c) Implemented based on formula
+$\vec{x} = (A^TA)^{-1}A^T\,\vec{b}$.} \\[.5cm]
+{\color{red} (d)
+$\vec{\gamma} =
+	\begin{bmatrix}
+         -0.0883 \\
+ 		-0.093 \\
+ 		-0.9184
+ 	\end{bmatrix}$ } \\
+
+Using IPython, we have that:
+$$\gamma_A = -0.0883$$
+$$\gamma_B = -0.093$$
+$$\gamma_C = -0.9184$$
+
+which gives us that
+\begin{center}
+$\vec{\gamma} =
+    \begin{bmatrix}
+        \gamma_A \\
+		\gamma_B \\
+		\gamma_C
+	\end{bmatrix} =
+	\begin{bmatrix}
+        -0.0883 \\
+		-0.093 \\
+		-0.9184
+	\end{bmatrix}$
+\end{center}
+{\color{red} (e)} \\
+
+For the three loaded sounds, music\_y is the song ``Hallelujah''; noise1\_y is full of static noise; noise2\_y is static noise plus some other noise (laughter and train whistle). \\
+
+Then, adding the first noise to the signal literally imposes the static noise upon the song; adding the second noise does the same thing, with the extra bit of laughters and train whistles. \\
+
+Only the origianl music (music\_y) is not full of static. Adding both noises would make the sound full of static, but the effect is especially obvious when adding the first noise.
+
+\end{document}

@@ -1,0 +1,92 @@
+\documentclass{article}
+\usepackage[left=3cm, right=3cm, top=3cm]{geometry}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{mathrsfs}
+\usepackage{xcolor}
+\begin{document}
+
+{\Large 4. Image Analysis} \\[.5cm]
+{\large {\color{red} (a) } }\\
+
+We can find the equation of a circle that surrounds the cell by performing least squares on the points and find the best-fit quadratic equation of the form of a circle. \\
+
+We first set up a system of linear equations from our data:
+$$(0.3^2+(-0.69)^2) a + 0.3 d + (-0.69) e =
+	0.5661 a + 0.3 d - 0.69 e \approx 1$$
+$$(0.5^2+0.87^2) a + 0.5 d + 0.87 e =
+	1.0069 a + 0.5 d + 0.87 e \approx 1$$
+$$(0.9^2+(-0.86)^2) a + 0.9 d + (-0.86) e =
+	1.5496 a + 0.9 d - 0.86 e \approx 1$$
+$$(1^2+0.88^2) a + 1\cdot d + 0.88 e =
+	1.7744 a + 1\cdot d + 0.88 e \approx 1$$
+$$(1.2^2+(-0.82)^2) a + 1.2 d + (-0.82) e =
+	2.1124 a + 1.2 d - 0.82 e \approx 1$$
+$$(1.5^2+0.64^2) a + 1.5 d + 0.64 e =
+	2.6596 a + 1.5 d + 0.64 e \approx 1$$
+$$(1.8^2+0^2) a + 1.8 d + 0\cdot e =
+	3.24 a + 1.8 d + 0\cdot e \approx 1$$ \\
+
+Thus, we can formulate a set of matrix equations: {\color{red}
+$
+\begin{bmatrix}
+	0.5661 & 0.3 & -0.69 \\
+	1.0069 & 0.5 & 0.87 \\
+	1.5496 & 0.9 & -0.86 \\
+	1.7744 & 1   & 0.88 \\
+	2.1124 & 1.2 & -0.82 \\
+	2.6596 & 1.5 & 0.64 \\
+	3.24   & 1.8 & 0
+\end{bmatrix} \cdot
+\begin{bmatrix}
+	a \\ d \\ e
+\end{bmatrix} =
+\begin{bmatrix}
+	1 \\ 1 \\ 1 \\ 1 \\ 1 \\ 1 \\ 1
+\end{bmatrix} + \vec{e}
+$} \\[.5cm]
+
+{\large \noindent {\color{red} (b) } } \\
+
+Similar to part (a), we can find the equation of an ellipse that surrounds the cell by performing least squares on the points and find the best-fit quadratic equation of the form of an ellipse. \\
+
+We first set up a system of linear equations from our data:
+$$0.3^2 a + 0.3\cdot(-0.69) b + (-0.69)^2 c + 0.3 d + (-0.69) e \approx 1$$
+$$0.5^2 a + 0.5\cdot0.87 b + 0.87^2 c + 0.5 d + 0.87 e \approx 1$$
+$$0.9^2 a + 0.9\cdot(-0.86) b + (-0.87)^2 c + 0.9 d + (-0.86) e \approx 1$$
+$$1^2 a + 1\cdot0.88 b + 0.88^2 c + 1 d + 0.88 e \approx 1$$
+$$1.2^2 a + 1.2\cdot(-0.82) b + (-0.82)^2 c + 1.2 d + (-0.82) e \approx 1$$
+$$1.5^2 a + 1.5\cdot0.64 b + 0.64^2 c + 1.5 d + 0.64 e \approx 1$$
+$$1.8^2 a + 1.8\cdot0 b + 0^2 c + 1.8 d + 0\cdot e \approx 1$$ \\
+
+Thus, the set of matrix equations is: {\color{red}
+$
+\begin{bmatrix}
+	0.09 & -0.207 & 0.4761 & 0.3 & -0.69 \\
+	0.25 & 0.435  & 0.7569 & 0.5 & 0.87 \\
+	0.81 & -0.774 & 0.7396 & 0.9 & -0.86 \\
+	1    & 0.88   & 0.7744 & 1   & 0.88 \\
+	1.44 & -0.984 & 0.6724 & 1.2 & -0.82 \\
+	2.25 & 0.96   & 0.4096 & 1.5 & 0.64 \\
+	3.24 & 0      & 0      & 1.8 & 0
+\end{bmatrix} \cdot
+\begin{bmatrix}
+	a \\ b \\ c \\ d \\ e
+\end{bmatrix} =
+\begin{bmatrix}
+	1 \\ 1 \\ 1 \\ 1 \\ 1 \\ 1 \\ 1
+\end{bmatrix} + \vec{e}
+$} \\[.5cm]
+
+{\large \noindent {\color{red} (c) $\frac{\Vert\vec{e}\Vert}{N} = 0.1375$ } } \\
+
+Points and best-fit circle plotted on IPython. \\[.5cm]
+
+{\large \noindent {\color{red} (d) $\frac{\Vert\vec{e}\Vert}{N} = 0.01285$; Much smaller error; Ellipse is better. } } \\
+
+Points and best-fit ellipse plotted on IPython. \\
+
+This average error, $\frac{\Vert\vec{e}\Vert}{N} = 0.01285$ is much smaller than that of the circle's in part (c), which indicates that the method in part (d), the best-fit ellipse, is a better technique.
+
+
+\end{document}

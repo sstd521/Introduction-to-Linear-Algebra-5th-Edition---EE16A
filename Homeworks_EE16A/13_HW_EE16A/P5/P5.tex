@@ -1,0 +1,151 @@
+\documentclass{article}
+\usepackage[left=3cm, right=3cm, top=3cm]{geometry}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{mathrsfs}
+\usepackage{xcolor}
+\begin{document}
+
+{\Large 5. Pollster: Regularized Least Squares} \\[.5cm]
+{\color{red} (a) $\mathbf{A} = \mathbb{R}^{90\times10},\
+\vec{x} = \mathbb{R}^{10\times1},\
+\vec{b} = \mathbb{R}^{90\times1}$ } \\
+
+$\mathbf{A}$ is constructed as the first 90 examples in the dataset, i.e. the 90 feature vectors of the first 90 counties. It has dimensions $90\times10$. \\
+
+$\vec{x}$ is the model vector we're trying to train and optimize, i.e. the weight vector that would optimize the predictions of the voting decisions of any county. It has dimensions $10\times1$. \\
+
+$\vec{b}$ is constructed as the 90 actual voting decisions of the first 90 counties. It has dimensions $90\times1$. \\
+
+\noindent {\color{red} (b) } \\
+
+Using IPython, I found the solved for $\vec{\hat{x}}$ (vector indicated on IPython), and using this linear model, I evaluated that the total prediction error on the {\color{blue} training} data is: {\color{red} 0.8633}; the total prediction error on the {\color{blue} testing} data is: {\color{red} 0.3203}. \\
+
+\noindent {\color{red} (c) Direct Proof } \\
+
+First, since the eigenvalues of $\mathbf{A}^T\mathbf{A}$ are denoted as $\lambda_i$, so as we proved in HW earlier, we have that the eigenvalues of $\mathbf{A}^T\mathbf{A}^{-1}$ are
+$\frac{1}{\lambda_i}$. \\
+
+The solution $\vec{\tilde{x}}$ to the least squares problem $\mathbf{A}\vec{x} = \vec{b}$ is, by our formula:
+$$\vec{\tilde{x}} =
+(\mathbf{A}^T \mathbf{A})^{-1} \mathbf{A}^T \vec{b}$$
+
+Thus, $\vec{e} = \vec{b} - \mathbf{A}\vec{\tilde{x}} =
+\vec{b} - \mathbf{A} (\mathbf{A}^T \mathbf{A})^{-1} \mathbf{A}^T \vec{b}$, and since
+$\mathbf{A}^T \vec{b} =
+	\sum\limits_{i=1}^{N} \beta_i\vec{v_i}$,
+so we can further simplify the error vector (along with the properties of eigenvalues and eigenvectors) as:
+$$\vec{e} =
+\vec{b} - \mathbf{A} (\mathbf{A}^T \mathbf{A})^{-1}
+	\sum\limits_{i=1}^{N} \beta_i\vec{v_i} =
+\vec{b} - \mathbf{A}
+	\sum\limits_{i=1}^N \frac{\beta_i}{\lambda_i} \vec{v_i} $$
+
+Therefore,
+$$\Vert \vec{e} \Vert =
+\Vert \vec{b} - \mathbf{A}
+	\sum\limits_{i=1}^N \frac{\beta_i}{\lambda_i} \vec{v_i}
+	\Vert =
+\Big\Vert \vec{b} - \mathbf{A} \big(
+	\frac{\beta_1}{\lambda_1}\vec{v_1} +
+	\frac{\beta_2}{\lambda_2}\vec{v_2} + \cdots +
+	\frac{\beta_N}{\lambda_N}\vec{v_N}
+\big) \Big\Vert$$
+
+as desired. Q.E.D. \\
+
+\noindent {\color{red} (d) Yes, we do. } \\
+
+The maximum eigenvalue is about 526, and all other eigenvalues (except one at about 377) is less than 10, which means that we're encountering the issue described in part (c). \\
+
+\noindent {\color{red} (e) $\tilde{\mathbf{A}} = \mathbb{R}^{100\times10},\ \vec{\tilde{b}} = \mathbb{R}^{100\times1}$ } \\
+
+By the nature of concatenation,
+since the identity matrix $\mathbf{I}$ would have dimensions $10\times10$,
+so $\tilde{\mathbf{A}}$ has dimensions $100\times10$, and
+$\vec{\tilde{b}}$ has dimensions $100\times1$. (Implemented with IPython.) \\
+
+\noindent {\color{red} (f) Direct Proof } \\
+
+First, define some variables for notation: let
+$$\mathbf{\tilde{A}} =
+\Big[ \frac{\mathbf{A}}{\sqrt{\gamma}\,\mathbf{I}} \Big],
+\indent \vec{\tilde{b}} =
+\Big[ \frac{\vec{b}}{\vec{0}} \Big]$$
+
+So, the solution $\vec{\tilde{x}}$ to the least squares problem $\mathbf{\tilde{A}}\vec{x} = \vec{\tilde{b}}$ is, by our formula:
+$$\vec{\tilde{x}} =
+(\mathbf{\tilde{A}}^T \mathbf{\tilde{A}})^{-1} \mathbf{\tilde{A}}^T \vec{\tilde{b}}$$
+
+Thus, using the hint regarding matrix-matrix multiplication handled in blocks, we have that:
+$$\mathbf{\tilde{A}}^T \mathbf{\tilde{A}} =
+\Big[ \mathbf{A}^T \Big|\sqrt{\gamma}\,\mathbf{I} \Big]
+\Big[ \frac{\mathbf{A}}{\sqrt{\gamma}\,\mathbf{I}} \Big] =
+\mathbf{A}^T\mathbf{A} + \gamma\mathbf{I}$$
+$$\mathbf{\tilde{A}}^T \vec{\tilde{b}} =
+\Big[ \mathbf{A}^T \Big|\sqrt{\gamma}\,\mathbf{I} \Big]
+\Big[ \frac{\vec{b}}{\vec{0}} \Big] =
+\mathbf{A}^T \vec{b} + \vec{0} =
+\mathbf{A}^T \vec{b} $$
+
+Therefore, we can conclude that solution to the modified linear least squares problem is:
+$$\vec{\tilde{x}} =
+(\mathbf{A}^T\mathbf{A} + \gamma\mathbf{I})^{-1}
+\mathbf{A}^T \vec{b} $$
+
+as desired. Q.E.D. \\
+
+\noindent{\color{red} (g) Direct Proof } \\
+
+First, since the eigenvalues of $\mathbf{A}^T\mathbf{A}$ are denoted as $\lambda_i$, so for any arbitrary eigenvector $\vec{u_k}$ of $\mathbf{A^T}\mathbf{A}$, we have that
+$$(\mathbf{A^T}\mathbf{A} + \gamma\mathbf{I})\ \vec{u_k} =
+\mathbf{A^T}\mathbf{A} \vec{u_k} +
+	\gamma\mathbf{I} \vec{u_k} =
+\lambda_k \vec{u_k} + \gamma \vec{u_k} =
+(\lambda_k + \gamma)\ \vec{u_k} $$
+
+Thus, by definition, all the eigenvectors $\vec{u_i}$ of $\mathbf{A^T}\mathbf{A}$ are also eigenvectors $\vec{v_i}$ of $\mathbf{A^T}\mathbf{A} + \gamma\mathbf{I}$
+(this result could also be achieved via the diagonalization of $\mathbf{A}^T\mathbf{A}$, which I've used as a sanity check for myself),
+and with our calculation, the corresponding eigenvalues are
+$(\lambda_i + \gamma)$.
+Then, similarly, as we proved in HW earlier, we have that the eigenvalues of
+$(\mathbf{A}^T\mathbf{A} + \gamma\mathbf{I})^{-1}$ are
+$\frac{1}{\lambda_i + \gamma}$. \\
+
+Then, the solution $\vec{\tilde{x}}$ to the least squares problem $\mathbf{A}\vec{x} = \vec{b}$ is, by our formula:
+$$\vec{\tilde{x}} =
+(\mathbf{A}^T \mathbf{A})^{-1} \mathbf{A}^T \vec{b}$$
+
+Thus, $\vec{e} = \vec{b} - \mathbf{A}\vec{\tilde{x}} =
+\vec{b} - \mathbf{A} (\mathbf{A}^T \mathbf{A})^{-1} \mathbf{A}^T \vec{b}$, and given that
+$\mathbf{A}^T \vec{b} =
+	\sum\limits_{i=1}^{N} \beta_i\vec{v_i}$,
+so we can further simplify the error vector (along with the properties of eigenvalues and eigenvectors) as:
+$$\vec{e} =
+\vec{b} - \mathbf{A} (\mathbf{A}^T \mathbf{A})^{-1}
+	\sum\limits_{i=1}^{N} \beta_i\vec{v_i} =
+\vec{b} - \mathbf{A}
+	\sum\limits_{i=1}^N \frac{\beta_i}{\lambda_i + \gamma} \vec{v_i} $$
+
+Therefore,
+$$\Vert \vec{e} \Vert =
+\Vert \vec{b} - \mathbf{A}
+	\sum\limits_{i=1}^N \frac{\beta_i}{\lambda_i} \vec{v_i}
+	\Vert =
+\Big\Vert \vec{b} - \mathbf{A} \big(
+	\frac{\beta_1}{\lambda_1 + \gamma} \vec{v_1} +
+	\frac{\beta_2}{\lambda_2 + \gamma} \vec{v_2} + \cdots +
+	\frac{\beta_N}{\lambda_N + \gamma}\vec{v_N}
+\big) \Big\Vert$$
+
+as desired. Q.E.D. \\
+
+
+\noindent{\color{red} (h) } \\
+
+As $\gamma$ increases, the eigenvalues of $\mathbf{A}^T\mathbf{A}$ increases as well, and they shift directly up the y-axis. \\[.5cm]
+{\color{red} (i) $\gamma = 9.326$; Error slightly decreased. } \\
+
+The best choice, optimal $\gamma$ is {\color{blue} $\gamma = 9.326$}. Here, using the modified least squares with the optimal $\gamma$, we achieved Total Prediction Error on testing data as {\color{blue} 0.3065}, which is just a bit smaller than the total prediction error on testing data calculated in part (b), 0.3203.
+
+\end{document}
