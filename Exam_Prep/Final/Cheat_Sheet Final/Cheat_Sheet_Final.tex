@@ -6,148 +6,78 @@
 \usepackage{graphicx}
 \begin{document}
 
-\noindent{\Large Circuit Analysis}
+\noindent{\Large Circuit Design}
 \begin{itemize}
-	\item KCL: The net current flowing out of (= into) any junction of a circuit is 0.
-	\item KVL: $\sum\limits_{loop} V_k = 0$
-	\item Ohm's Law: $V_{elem} = I_{elem}R$ (Volt = Ampere $\cdot$ Ohm $\Omega$)
-	\item Passive sign convention: Positive current should enter the positive terminal and exit the negative terminal of an element. Positive power means that power is dissipated, and negative power means that power is being generated.
-	\item Resistors: in series $R_{eq} = R_1+R_2$; in parallel $R_{eq} = R_1||R_2 = \frac{R_1R_2}{R_1+R_2}$
-	% \item Steps for solving circuits
-	% \begin{enumerate}
-	% 	\item Pick a node and label it as ``ground''.
-	% 	\item Label all remaining nodes as some $u_i$, representing the voltage relative to the ground node.
-	% 	\item Label the current through every {\color{blue} non-wire element} (= elements below) in the circuit $i_n$.
-	% 	\item Add $+/-$ labels (direction of voltage meas.) on each element by following the {\color{red} passive sign convention}.
-	% 	\item Set up $A\vec{x}=\vec{b}$, where $\vec{x}$ is comprised of the $u_i$’s and $i_n$’s defined in the previous steps.
-	% 	\item If there are $n$ nodes (including the ground node), use KCL on $(n-1)$ nodes to fill in $(n-1)$ rows of $A$ and $\vec{b}$.
-	% 	\item If there are $m$ elements, use the $IV$ relationship of each element to fill in the remaining $m$ equations (rows of $A$ and values of $\vec{b}$).
-	% 	\item Solve with linear algebra!
-	% \end{enumerate}
-	\item {\color{red} Voltage divider}: $V_{out} = \frac{R_{out}}{R_1+R_{out}}\cdot V_s$
-	%\item Current divider: $R_1,R_2$ in parallel with independent current source $I_s$, then $I_{R_2} = \frac{R_1}{R_1+R_2}I_s = \frac{R_1||R_2}{R_2}I_s$
-	\item $I = \frac{dQ}{dt}$ (Coulombs/second)
-	\item {\color{red} $R = \rho\cdot\frac{L}{A}$}
-	\item $P = VI = I^2R = \frac{V^2}{R} = \frac{dE}{dt} = V\frac{dQ}{dt}$
+	\item Design Procedure
+	\begin{enumerate}
+		\item Step 1 (Specification): Concretely restate the goals for the design.
+		\item Step 2 (Strategy): Describe your strategy (often in the form of a block diagram) to achieve your goal.
+		\item Step 3 (Implementation): Implement the components described in your strategy.
+		\item Step 4 (Verification): Check that your design from Step 3 does what you specified in Step 1.
+	\end{enumerate}
+	\item ``Almost'' Current Source ($V_s$ + negative feedback op-amp)
 \end{itemize}
 
-\pagebreak
-\noindent{\Large Superposition and Equivalence}
+
+
+\noindent{\Large Locationing and Trilateration}
 \begin{itemize}
-	\item Superposition: Zero all but 1 independent source (Voltage source: replace with a wire; Current source: replace with an open circuit)
-	\item Def 15.1 (equivalent circuit): If we pick two terminals within a circuit, we say that another circuit is equivalent to the original circuit if it exhibits the same $I-V$ relationship at those two terminals. (In short, Two circuits are equivalent if they have the same $I-V$ relationship.)
-	\item Thevenin equivalent circuit: 1 voltage source and 1 resistor (``in series'')
+	\item Inner Product
 	\begin{itemize}
-		\item Find $V_{Th}$: Connect an open circuit across the two output terminals and measure the voltage across them. This measured $V_{OC}$ equals $V_{Th}$.
+		\item Commutative: $\langle \vec{x}, \vec{y} \rangle = \langle \vec{y}, \vec{x} \rangle$
+		\item $\langle c\vec{x}, \vec{y} \rangle = c\langle \vec{x}, \vec{y} \rangle$
+		\item Linearity: $\langle \vec{x}, \vec{y+z} \rangle = \langle \vec{x}, \vec{y} \rangle + \langle \vec{x}, \vec{z} \rangle$
 	\end{itemize}
-	\item Norton equivalent circuit: 1 current source and 1 resistor (``in parallel'')
+	\item Orthogonal $\iff$ Inner product = 0
+	\item Euclidean Norm:
+		$\Vert \vec{x} \Vert_2 =
+			\sqrt{x_1^2 + \cdots + x_n^2} = \sqrt{\langle \vec{x}, \vec{x} \rangle} $
 	\begin{itemize}
-		\item Find $I_{No}$: Connect a short circuit across the two output terminals and measure the current through it. This measured $I_{SC}$ equals $I_{No}$.
+		\item Non-negativity, Zero Vector, Scalar Multiplication, Triangle Inequality
 	\end{itemize}
-	\item For $R_{eq}$ between nodes $a,b$:
-	\begin{enumerate}
-		\item Calculate $V_{th}$ and $I_{no}$ (superposition if necessary), and then $R_{eq} = \frac{V_{th}}{I_{no}}$ \\
-		{\color{blue} N.B.} Works only if $\exists$ at least one independent source in the circuit. Else, $V_{th} = I_{no} = 0$.
-		\item Zero out {\color{red} all} independent sources and apply a $V_{test}$ or $I_{test}$ to calculate the resulting $I_{test}$ or $V_{test}$ respectively. $R_{eq} = \frac{V_{test}}{I_{test}}$. \\
-		{\color{blue} N.B.} Works for any circuit. When in doubt, use this.
-	\end{enumerate}
-	\item The power dissipated by the source in the original circuit is not the same as the power dissipated in the Thevenin equiv. circuit, but the power through $R_{load}$ is the same! Thevenin equiv. can be used to calculate the power through elements that are not part of the circuit that was transformed.
-	\item Extra: {\color{red} $R_{Th} = R_{No}$}; Norton $\rightarrow$ Thevenin: $V_{th} = I_{No}R_{No}$; Thevenin $\rightarrow$ Norton: $I_{No} = \frac{V_{Th}}{R_{Th}}$;
-	\item Extra: Resistors in parallel have an equivalent resistance $<$ any of the individual resistors (positive resistances).
-	\item Extra: The power generated by the Thevenin equivalent circuit $\neq$ total power generated in the original circuit.
+	\item $\langle \vec{x}, \vec{y} \rangle =
+		\Vert \vec{x} \Vert\, \Vert \vec{y} \Vert \cos\theta
+		\Longrightarrow \vert \langle \vec{x}, \vec{y} \rangle \vert \leq
+		\Vert \vec{x} \Vert\, \Vert \vec{y} \Vert$
+		The Cauchy-Schwarz inequality
+
+	\item The projection of $\vec{y}$ onto $\vec{x}$
+		(with $\vec{u} = \vec{x}\, /\, \Vert \vec{x} \Vert$) is:
+		$$\text{proj}_{\vec{x}} \vec{y} =
+					\langle \vec{y}, \vec{u} \rangle \vec{u} =
+					\Big\langle \vec{y}, \frac{\vec{x}}{\Vert\vec{x}\Vert} \Big\rangle\
+						\frac{\vec{x}}{\Vert\vec{x}\Vert} =
+		\frac{\langle \vec{y}, \vec{x}\rangle}
+			{\langle \vec{x}, \vec{x} \rangle} \ \vec{x} $$
+	\item {\color{blue} Linear cross-correlation}:
+		corr$(\vec{x}, \vec{y})[k] =
+			\sum\limits_{i=-\infty}^\infty \vec{x}[i]\,\vec{y}[i-k]$
+	\item {\color{blue} Circular cross-correlation} with period $N$:
+		circcorr$(\vec{x}, \vec{y})[k] =
+			\sum\limits_{i=0}^{N-1} \vec{x}[i] \, \vec{y}[(i-k)_N]$ \\
+		$\iff$ circcorr$(\vec{x}, \vec{y})[k] =
+			\big\langle \vec{x}, \vec{y}^{(k)} \big\rangle =
+				\vec{y}^{(k)^T} \vec{x} $ \\
+
+		Thus, circcorr$(\vec{x}, \vec{y}) = \begin{bmatrix}
+		\big\langle \vec{x}, \vec{y}^{(0)} \big\rangle \\
+		\big\langle \vec{x}, \vec{y}^{(1)} \big\rangle \\
+		\vdots \\
+		\big\langle \vec{x}, \vec{y}^{(N-1)} \big\rangle
+		\end{bmatrix} = C_{\vec{y}} \vec{x}$
+		where $C_{\vec{y}}$ is the matrix containing all of the shifted versions of $\vec{y}$ in its rows.
+	\item corr$(\vec{x}, \vec{y}) \neq$ corr$(\vec{y}, \vec{x})$, and thus,
+		circcorr$(\vec{x}, \vec{y}) \neq$ circcorr$(\vec{y}, \vec{x})$
+	\item {\color{blue} Autocorrelation}: a correlation between a signal and itself, i.e. circcorr$(\vec{x}, \vec{x})$
 \end{itemize}
 
-\pagebreak
-\noindent{\Large Capacitors}
+
+
+\noindent{\Large Least Squares}
 \begin{itemize}
-	\item $C = I\cdot t = \frac{P}{V}t = \frac{Energy}{V}$
-	\item $Q = CV_c\iff C = \frac{Q}{V_c}$ unit is Farad (F), $1A\cdot 1s$
-	\item $I = \frac{dQ}{dt} = C\frac{dV_c}{dt}$ (general), so current is flowing through the capacitor $\iff$ the voltage across the capacitor is changing with time. ({\color{red} $I_c(t) = C\frac{dV_c(t)}{dt}$})
-	\item $\Longrightarrow V_c(t) = \frac{{\color{red} I}}{C}t + V_c(0)$ Only valid when the current is constant over time.
-	\item $C_{eq} = \frac{I_{test}}{\frac{dV_{test}}{dt}}$
-	\item Capacitors: {\color{red} in series} $C_{eq} = C_1||C_2 = \frac{C_1C_2}{C_1+C_2}$; in parallel $C_{eq} = C_1+C_2$
-	\item {\color{red} $C = \epsilon\frac{A}{d}$}
-	\item Energy stored in capacitor: $E = \frac{1}{2} C_{eq}V^2$
-	\item For $V_c(0) = 0V,$ then $V = \frac{I_st}{C}$.	If we measure the voltage at a known time $t$, we can solve for the capacitance. However, as time continues to pass, the voltage across the capacitor (and also the charge stored on the capacitor) will grow to $\infty$. It is very challenging to build an ideal current source that works over this large range of voltages, so our model quickly becomes unrealistic $\Longrightarrow$ periodic current source.
-	\item Consider a square current $I_s$
-	\begin{itemize}
-		\item $I_s$ is constant from $t=0$ to $t = \frac{\tau}{2}$, so $V_c(t) = \frac{I_s}{C}t$ when $0\leq t\leq\frac{\tau}{2}$
-		\item Similarly, $V_c(t) = -\frac{I_s}{C}(t-\frac{\tau}{2}) + \frac{I_s\tau}{2C}$ when $\frac{\tau}{2}<t<\tau$
-	\end{itemize}
-
-% \begin{figure} [h!]
-% 	\begin{center}
-% 	\includegraphics[width=0.5\linewidth]{/Users/Alan/Desktop/Periodic}
-% 	\caption{Periodic Current Source}
-% 	\label{fig}
-% 	\end{center}
-% \end{figure}
-
-\end{itemize}
-
-\pagebreak
-\noindent{\Large Op-Amp and Golden Rules}
-\begin{itemize}
-	\item Apply KCL, then use Golden Rule(s) to find desired relationships.
-	\item Op-amp (operational amplifier): $A>1$ is the gain. Op-amp acts $\sim$ a comparator since $A$ is very large.
-% \begin{figure} [h!]
-% 	\begin{center}
-% 	\includegraphics[width=0.5\linewidth]{/Users/Alan/Desktop/op-amp}
-% 	\caption{Op-amp Voltage Formula}
-% 	\label{fig}
-% 	\end{center}
-% \end{figure}
-
-	\item For an ideal op-amp, we have $A\rightarrow\infty$, which implies {\color{red} Golden Rules}:
-	\begin{enumerate}
-		\item $I_+ = I_- = 0$ holds regardless of whether there's negative feedback or not.
-		\item $U_+ = U_-$ holds $\iff$ there's negative feedback.
-	\end{enumerate}
-	\item Checking if an op-amp is in {\color{blue} negative feedback}:
-	\begin{enumerate}
-		{\color{red}\item Zero out all independent sources} like we did in Thevenin-Norton Equivalences.
-		\item Increase the output. If the feedback coming from the circuit as a result of increasing the output is in the opposite direction (i.e. decreasing), then the circuit is in negative feedback. If not, the circuit is in positive feedback or zero feedback.
-	\end{enumerate}
-
-	% \begin{figure} [h!]
-	% \begin{center}
-	% \includegraphics[width=0.3\linewidth]{/Users/Alan/Desktop/opamp-neg}
-	% \caption{Negative Feedback}
-	% \label{fig}
-	% \end{center}
-	% \end{figure}
-	\item In this negative feedback setup, {\color{red} $V_{out} = V_{in} (1+\frac{R_1}{R_2})$}. Thus, As long as the two resistors are produced with the same error rate $\epsilon$, i.e., they have resistance $(1+\epsilon)R_1$ and $(1+\epsilon)R_2$, then the ratio between their resistance will remain the same, so $\frac{V_{out}}{V_{in}}$ is the same.
-
-% \begin{figure} [h!]
-% 	\begin{center}
-% 	\includegraphics[width=0.3\linewidth]{/Users/Alan/Desktop/opamp-invert}
-% 	\caption{Inverting Amplifier}
-% 	\label{fig}
-% 	\end{center}
-% \end{figure}
-	\item Inverting an op-amp gives {\color{red} $V_{out} = -\frac{R_f}{R_{in}} V_{in}$}. Here, gain $A = -\frac{R_f}{R_{in}}$ can have be any negative value.
-
-% \begin{figure} [h!]
-% 	\begin{center}
-% 	\includegraphics[width=0.5\linewidth]{/Users/Alan/Desktop/opamp-neuron}
-% 	\caption{Inverting Summing Amplifier}
-% 	\label{fig}
-% 	\end{center}
-% \end{figure}
-	\item This models an artificial neuron, withs $V_{ana} = -\frac{R_3}{R_1}V_1 - \frac{R_3}{R_2}V_2$, and so {\color{red} $V_{out} = -\frac{R_4}{R_4}V_{ana} = \frac{R_3}{R_1}V_1 + \frac{R_3}{R_2}V_2$}
-
-% \begin{figure} [h!]
-% 	\begin{center}
-% 	\includegraphics[width=0.5\linewidth]{/Users/Alan/Desktop/opamp-unity}
-% 	\caption{Unity Gain Buffer}
-% 	\label{fig}
-% 	\end{center}
-% \end{figure}
-	\item {\color{blue} Unity gain buffer} to cancel out the effects of loading, allowing $V_{speaker} = V_{DAC}\frac{A}{1+A}\sim V_{DAC}$ as $A\rightarrow\infty$.
-	\item Buffers are a powerful tool because they allow us to split circuits into blocks that we can analyze separately and then combine later. When circuit blocks behave the same way regardless of what they’re are connected to, we don’t need to worry about what’s inside, making it much easier to design complex circuits.
-
-	\item Extra: An op-amp cannot operate without externally supplied power. Any power an op-amp delivers to a load comes from the supply voltages since it can't generate its own energy.
-	\item Extra: Since an op-amp has infinite input resistance, there's no current flowing into the input terminals, so it doesn't change the voltage of any circuit it's connected to.
+	\item Error vector: $\vec{e} = \mathbf{A}\vec{x} - \vec{b}$
+	\item Minimizing $\Vert\vec{e}\Vert^2$, the optimal solution (in least squares sense) is:
+		$\vec{\tilde{x}} = (\mathbf{A}^T \mathbf{A})^{-1}\ \mathbf{A}^T \vec{b}$
 
 % \begin{figure} [h!]
 % 	\begin{center}
@@ -159,21 +89,105 @@
 
 \end{itemize}
 
-\pagebreak
+
+
+
+\noindent{\Large OMP}
+\begin{itemize}
+	\item Setup:
+	\begin{itemize}
+		\item Let the number of unique codes be $m$. Each code is length $n$. We represent each of the $m$ codes with a vector $\vec{s_i}$ where $i\in\{0,\dots,m-1\}$. Each code can potentially carry a message $a_i$ along with it. Then the measurement at the receiver is:
+			$$\vec{y} = a_0\vec{s}_0^{(\tau_0)} + a_1\vec{s}_1^{(\tau_1)} + \cdots +
+				a_{m-1}\vec{s}_{m-1}^{(\tau_{m-1})}$$
+		We will assume that the number of codes that are being broadcast at the same time is very small (for example, 10). If a code is not being broadcast, it’s coefficient $a_i = 0$. Therefore, there are at most $k$ non-zero $a_i$’s.
+	\end{itemize}
+	\item Inputs:
+	\begin{itemize}
+		\item A set of $m$ codes, each of length $n$, i.e. $S = \{\vec{s_0}, \vec{s_1}, \dots, \vec{s_{m-1}}\}$
+		\item An $n$-dimensional received signal vector, i.e. $\vec{y}$
+		\item The sparsity level $k$ of the signal, i.e. the number of codes with non-zero coefficients.
+		\item Some threshold, $th$. When $\Vert \vec{e}\Vert < th$, the signal is assumed to contain only noise.
+	\end{itemize}
+	\item Outputs:
+	\begin{itemize}
+		\item A set of codes that were identified, $F$, which will contain at most $k$ elements.
+		\item A vector $\vec{x}$ containing the coefficients of the codes ($a_1$ etc.), which will be of length $k$ or less.
+		\item An $n$-dimensional residual $\vec{e}$
+	\end{itemize}
+	\item Procedure:
+	\begin{itemize}
+		\item Initialize the following values:
+		$\vec{e} = \vec{y}, j=1, A = [\,], F = \{\emptyset\}$
+		\item While $j\leq k$ and $\Vert \vec{e}\Vert \geq th$:
+		\begin{enumerate}
+			\item Cross correlate $\vec{e}$ with each of the codes. Find the code index, $i$, and the shifted version of the code, $\vec{s}_i^{(\tau_i)}$, with which the received signal has the highest correlation value.
+			\item Add $i$ to the set of code indices, $F$.
+			\item Column concatenate matrix $A$ with the correct shifted version of the code:
+			$A = \big[A\ \big|\ \vec{s}_i^{(\tau_i)} \big]$
+			\item Use least squares to obtain the code coefficients: $\vec{x} = (\mathbf{A}^T \mathbf{A})^{-1}\ \mathbf{A}^T \vec{y}$
+			\item Update the residual value: $\vec{e} = \vec{y} - A\vec{x}$
+			\item Update the counter: $j = j+1$
+		\end{enumerate}
+		\item Stop iterating when you’ve done $k$ iterations (i.e. you’ve reached the pre-determined sparsity level of the signal) or when the norm of the residual drops below the threshold $th$. We’ll stop at which ever one happens first.
+	\end{itemize}
+
+% \begin{figure} [h!]
+% 	\begin{center}
+% 	\includegraphics[width=0.5\linewidth]{/Users/Alan/Desktop/invert-or-not}
+% 	\caption{Inverting v. Non-Inverting}
+% 	\label{fig}
+% 	\end{center}
+% \end{figure}
+
+\end{itemize}
+
+
+
+
 \noindent{\Large Extra Sanity Checks}
 \begin{itemize}
-	\item Always return to the 7-step {\color{red} nodal analysis} if stuck or unsure.
-	\item {\color{red} Care: Units!!!}
-	\item The choice of ground does not matter. When labeling the currents through branches, the direction you pick does not matter.
-	\item A Norton equivalent of a voltage source is not necessary, since a voltage source is a basic element. The Thevenin equivalent is just a voltage source with voltage $V_s$, that is, $R_{th}$ = 0.
-	\item A Thevenin equivalent of a current source is not necessary because a current source is a basic element and cannot be represented as a voltage source. The Norton equivalent is just a current source with current $I_s$, that is, $R_{no}$ = $\infty$.
-	\item Make sure $V_{DD} > V_{SS}$ (equal is not really useful...)
-	\item We can connect an O-A to any other circuit, and the O-A will not disturb that circuit because it does not load the circuit (it is an open circuit). The output of the O-A can be connected to any other circuit (except a voltage source) to get the desired/expected voltage out of the O-A.
-	\item $\Longrightarrow$ current source should not enter a terminal directly (parallel with a resistor and then enter, Norton-Thev. equiv. into a voltage source with a resistor).
-	\item Positive gain $\iff$ non-inverting O-A; negative gain $\iff$ inverting O-A.
-	\item Incident Matrix is the transpose of the matrix created for nodal analysis.
-	\item Extra: Capacitors connected in series must have the same charge $Q$, and thus can calculate their voltage in proportion with $Q = CV$.
-	\item Ground is a reference, the point we define as 0 in a circuit. There's only 1 GND, so we can connect all the grounds. But, we can't even connect ground to other nodes that happens to be at $0V$.
+	\item Correlation is not commutative.
+	\item The inner product does not depend on the coordinate system the vectors are in, it only depends on the relative angle between these vectors and their length.
+	\item For circular cross-correlation, $\Vert \mathbf{C}_{\vec{x}} \vec{y} \Vert =
+		\Vert \mathbf{C}_{\vec{y}} \vec{x} \Vert$
+	\item We can't always uniquely determine our position in an $n$-dimensional world using $n+1$ beacons (since they might be collinear).
+	\item For linear corr, if the signals are periodic, then they continue on to $+\infty$ and $-\infty$, but we’ll just perform the linear correlation over one period, and realize that the signals outside of this period is periodic. For circular correlation, we look at circular shifts of one period of the signal.
+
+	\item Least squares is used for solving an {\color{blue} overdetermined} system and approximating a solution.
+	\item In order to use least squares, we need the variable to be {\color{red} linear} in the unknowns.
+	\item If the column vectors of $\mathbf{A}$ are linearly dependent, then there could be multiple solutions to the least squares problem.
+	\item In linear least squares, the error vector is {\color{red} orthogonal} to Col$(\mathbf{A})$, but it's not the case for any arbitrary cost function.
+
+	\item (Disc) For an orthonormal matrix $\mathbf{A}$, we have $\mathbf{A}^T\mathbf{A} = \mathbf{I}$ and $\mathbf{A}^T = \mathbf{A}^{-1}$
+	\begin{itemize}
+		\item If $\mathbf{A}\in\mathbb{R}^{N\times N}$, then its columns form a basis for $\mathbb{R}^{N}$ (Prove linear independence and thus invertible).
+		\item If $\mathbf{A}\in\mathbb{R}^{N\times M}$ has linearly indpendent columns. The vector $\vec{b}\in\mathbb{R}^N$ is not in the subspace spanned by the columns of $\mathbf{A}$. Then, the projection of $\vec{b}$ onto the subspace spanned by the columns of $\mathbf{A}$ is
+		$\text{proj}_{Col(\mathbf{A})} \vec{b} =
+			\vec{\tilde{b}} = \mathbf{A} \vec{\tilde{x}} =
+			\mathbf{A} (\mathbf{A}^T\mathbf{A})^{-1} \mathbf{A}^T \vec{b}$ \\
+		Thus, $\mathbf{A}^T (\vec{b} - \text{proj}_{Col(\mathbf{A})} \vec{b}) =
+		\mathbf{A}^T (\vec{b} - \vec{\tilde{b}}) = \vec{0}$ \\
+		($\vec{\tilde{b}} - \vec{x}$ is the error vector, which is orthogonal to Col$(\mathbf{A})$).
+		\item If $\mathbf{A}\in\mathbb{R}^{N\times M}$ with $N\geq M$, then $\mathbf{A}^T\mathbf{A} = \mathbf{I}_{M\times M}$, which then gives
+		$\text{proj}_{Col(\mathbf{A})} \vec{b} = \mathbf{A}\mathbf{A}^T \vec{b}$
+		
+	\end{itemize}
+	\item If given a new cost function, $f(x)$, to be the expression we are trying to minimize.
+	\begin{enumerate}
+		\item Calculate the derivative.
+		\item Set $f'(x) = 0$ and find the critical point.
+	\end{enumerate}
+	Since the second derivate of $f(x)$ is always positive, so
+	$x = \frac{\vec{a}\cdot\vec{b}}{\Vert\vec{a}\Vert^2}$
+	is the minimum of $x$ in the 2D case.
+	\item For OMP to work, the each code should be “almost” orthogonal to all of the other codes and to all the shifted versions of itself. (Orthogonal means that the inner product of two codes is exactly zero. “Almost” orthogonal means that the magnitude of the inner product is close to zero.) The “gold codes” that we looked at in the homework are good examples of codes that fulfill these properties and would work well for OMP.
+	\item OMP: solving underdetermined $A\vec{x} = \vec{b}$ (more unknowns than equations) with {\color{red} sparse} $\vec{x}$.
+	\item Matrix-matrix multiplication can be handled in blocks! Care: restrictions on the dimensions of the matrices,
+	i.e. $\mathbf{W} \in \mathbb{R}^{n\times m}, \mathbf{Y} \in \mathbb{R}^{m\times l},
+	\mathbf{X} \in \mathbb{R}^{n\times p}, \mathbf{Z} \in \mathbb{R}^{p\times l}$.
+	User beware: Remember that matrix-matrix multiplication does not, in general, commute.
+	$$\Longrightarrow \big[\mathbf{W}\, |\, \mathbf{X}\big] \bigg[\frac{\mathbf{Y}}{\mathbf{Z}}\bigg] = \mathbf{W}\mathbf{Y} + \mathbf{X}\mathbf{Z}$$
+	\item Inverse matrices have the same eigenvectors and reciprocal eigenvalues.
 \end{itemize}
 
 \end{document}
